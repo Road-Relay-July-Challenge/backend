@@ -10,7 +10,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables i
 @auth_api.route(LOGIN)
 def login():
     args = request.args
-    authorizationCode = args.get('code')
+    authorizationCode = args.get('authorization_code')
     print("Authorization code:", authorizationCode)
     payload = {
         'client_id': CLIENT_ID,
