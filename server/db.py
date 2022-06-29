@@ -1,3 +1,4 @@
+import numbers
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -80,6 +81,64 @@ def get_data(name):
 
     return person
 
+def get_sorted_names():
+    names = get_all_names()
+    unsorted_names = []
+    for name in names:
+        doc_ref = db.collection('Users').document(name)
+        person_ref = doc_ref.get()
+        mileage = person_ref.to_dict()['mileage']
+        person = {
+            "name" : name,
+            "mileage" : int(mileage)
+        }
+        unsorted_names.append(person)
+    sorted_names = sorted(sorted_names, key=lambda d: d["mileage"]) 
+    return sorted_names
+
+############## TEAM FUNCTIONS ######################
+
+def add_team(team):
+    doc_ref = db.collection('Teams').document(str(team.get("team_id")))
+    doc_ref.set({
+        "team_id" : team.get("team_id"),
+        "team_name" : team.get("team_name"),
+        "team_mileage" : team.get("team_mileage")
+    })
+
+
+#used to update any team data
+def update_team_data(team_id, field_name, updated_data):
+    doc_ref = db.collection('Teams').document(str(team_id))
+    doc_ref.update({
+        field_name : updated_data
+    })
+
+def get_all_team_id():
+    team_id = db.collection('Teams').stream()
+    teams = []
+    for team in team_id:
+        teams.append(team.to_dict()['team_id'])
+    return teams
+
+def get_sorted_teams():
+    teams = get_all_team_id()
+    unsorted_teams = []
+    for team in teams:
+        doc_ref = db.collection('Teams').document(team)
+        team_ref = doc_ref.get()
+        mileage = team_ref.to_dict()['team_mileage']
+        team_data = {
+            "team_id" : team,
+            "team_mileage" : int(mileage)
+        }
+        unsorted_teams.append(team_data)
+    sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_mileage"]) 
+    print(sorted_teams)
+
+
+
+
 
 def main():
     #test()
@@ -104,12 +163,26 @@ def main():
         "mileage" : mileage
     }
 
+
+    team_id = "3"
+    team_name = "worst team"
+    team_mileage = 99999
+    sample_team = {
+        "team_id" : team_id,
+        "team_name" : team_name,
+        "team_mileage" : team_mileage
+    }
+
     #add_person(person)
     #update_mileage("wen feng", 1200)
     #get_all_names()
     #update_data("zhen hong", "athlete_id", "789123")
     #get_name('987654')
-    get_data("jason")
+    #get_data("jason")
+    #get_sorted_names()
+    #add_team(sample_team)
+    #update_team_data("1", "team_mileage", 5000)
+    #get_sorted_teams()
 
 
 if __name__ == "__main__":
