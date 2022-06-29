@@ -9,13 +9,13 @@ from utils import get_new_access_token, convert_from_greenwich_to_singapore_time
 
 individual_api = Blueprint('individual_api', __name__)
 
-@individual_api.route(LIST_ALL_INDIVIDUAL)
+@individual_api.route(LIST_ALL_INDIVIDUAL, methods=['GET'])
 def list_all_individual():
     # get sorted array from DB
     # return as json -> use jsonify()
     return 
 
-@individual_api.route(GET_HALL_OF_FAME)
+@individual_api.route(GET_HALL_OF_FAME, methods=['GET'])
 def get_hall_of_fame():
     # get top 5 individuals for longest run, furthest run, highest accmulated mileage
     # each a different function from DBs

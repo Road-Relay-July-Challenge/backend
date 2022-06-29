@@ -9,7 +9,7 @@ from db import add_person
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
 
-@auth_api.route(VERIFY)
+@auth_api.route(VERIFY, methods=['GET'])
 def verify():
     args = request.args
     authorizationCode = args.get('code')
@@ -34,7 +34,7 @@ def verify():
     print(f"Successfully added {person['name']}")
     return return_json(True, f"Successfully added {person['name']}")
 
-@auth_api.route(REFRESH_ALL)
+@auth_api.route(REFRESH_ALL, methods=['GET'])
 def refresh_all():
     # make dictionary of all team and mileage = 0 
     # get collection of all participants from DB
