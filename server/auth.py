@@ -3,6 +3,7 @@ import requests
 import urllib3
 from config import CLIENT_ID, CLIENT_SECRET
 from routes import VERIFY, OAUTH_URL, REFRESH_ALL
+from individual import update_individual_total_mileage_from_strava
 from utils import return_json
 from db import add_person
 
@@ -37,12 +38,23 @@ def verify():
 @auth_api.route(REFRESH_ALL, methods=['GET'])
 def refresh_all():
     # make dictionary of all team and mileage = 0 
-    # get collection of all participants from DB
-    # collection contains: participantID, mileage, teamID, refreshToken
+    teamMileageDict = {}
 
-    # for each participant, call strava API to obtain updated mileage, and update dictionary
-        # if there is a change, update participant in DB 
-    # mileage of team += updated mileage 
+    # get collection of all participants from DB
+    all_athletes = []
+    # collection contains: participant_name, mileage, team_number, refresh_token
+    for athlete in all_athletes:
+        mileage = update_individual_total_mileage_from_strava(athlete.get("name"))
+        team_number = athlete.get("team_number")
+
+        if teamMileageDict.has_key(team_number):
+            teamMileageDict[team_number] = teamMileageDict[team_number] + mileage
+        else:
+            teamMileageDict[team_number] = mileage
     
     # for each team, if mileage of team != updated mileage, update DB 
+    for team in teamMileageDict.keys():
+        # update_data()
+        continue
     return
+    

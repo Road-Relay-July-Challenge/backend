@@ -27,13 +27,10 @@ def update_individual_total_mileage():
     if name == None:
         return return_json(False, f"Missing name field in request")
 
-    print(request.args)
-    new_mileage = get_total_mileage_from_strava(name)
-    # update DB
-    update_data(name, "mileage", new_mileage)
+    new_mileage = update_individual_total_mileage_from_strava(name)
     return return_json(True, f"Successfully updated {name}'s total mileage to {new_mileage} km.")
 
-def get_total_mileage_from_strava(name):
+def update_individual_total_mileage_from_strava(name):
     person = get_data(name)
 
     access_token_expiry = person.get("access_token_expired_at")
@@ -60,5 +57,8 @@ def get_total_mileage_from_strava(name):
             continue
 
         totalDistance = totalDistance + activity.get('distance')
+
+    totalDistance = int(totalDistance / 1000)
+    update_data(name, "mileage", totalDistance)
 
     return int(totalDistance / 1000)
