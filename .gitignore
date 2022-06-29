@@ -8,6 +8,7 @@ bin-release/
 __pycache__/
 .settings/
 .env
+.DS_Store
 
 # Executables
 *.swf
