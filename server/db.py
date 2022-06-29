@@ -35,7 +35,6 @@ def get_all_names():
     names = []
     for user in users:
         names.append(user.to_dict()['name'])
-    print(names)
     return names
 
 #used to update any data. example to update refresh token to 12345, 
@@ -45,6 +44,42 @@ def update_data(user_name, field_name, updated_data):
     doc_ref.update({
         field_name : updated_data
     })
+
+#get name using athlete id, id input as string
+def get_name(id):
+    names = get_all_names()
+    for name in names:
+        doc_ref = db.collection('Users').document(name)
+        person_ref = doc_ref.get()
+        retrieved_id = person_ref.to_dict()['athlete_id']
+        if (id == retrieved_id):
+            print('found')
+            return person_ref.to_dict()['name']
+
+#get all data using name
+def get_data(name):
+    doc_ref = db.collection('Users').document(name)
+    person_ref = doc_ref.get()
+    name = person_ref.to_dict()['name']
+    athlete_id = person_ref.to_dict()['athlete_id']
+    access_token = person_ref.to_dict()['access_token']
+    access_token_expired_at = person_ref.to_dict()['access_token_expired_at']
+    refresh_token = person_ref.to_dict()['refresh_token']
+    team_number = person_ref.to_dict()['team_number']
+    mileage = person_ref.to_dict()['mileage']
+
+    person = {
+        "name" : name,
+        "athlete id" : athlete_id,
+        "access token" : access_token,
+        "access token expired at" : access_token_expired_at,
+        "refresh token" : refresh_token,
+        "team number" : team_number,
+        "mileage" : mileage
+    }
+
+    return person
+
 
 def main():
     #test()
@@ -72,7 +107,9 @@ def main():
     #add_person(person)
     #update_mileage("wen feng", 1200)
     #get_all_names()
-    update_data("zhen hong", "mileage", "789")
+    #update_data("zhen hong", "athlete_id", "789123")
+    #get_name('987654')
+    get_data("jason")
 
 
 if __name__ == "__main__":
