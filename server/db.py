@@ -21,11 +21,11 @@ def add_person(person):
     doc_ref = db.collection('Users').document(person.get("name"))
     doc_ref.set({
         "name" : person.get("name"),
-        "athlete_id" : person.get("athlete id"),
-        "access_token" : person.get("access token"),
-        "access_token_expired_at" : person.get("access token expired at"),
-        "refresh_token" : person.get("refresh token"),
-        "team_number" : person.get("team number"),
+        "athlete_id" : person.get("athlete_id"),
+        "access_token" : person.get("access_token"),
+        "access_token_expired_at" : person.get("access_token_expired_at"),
+        "refresh_token" : person.get("refresh_token"),
+        "team_number" : person.get("team_number"),
         "mileage" : person.get("mileage"),
     })
 
@@ -70,11 +70,11 @@ def get_data(name):
 
     person = {
         "name" : name,
-        "athlete id" : athlete_id,
-        "access token" : access_token,
-        "access token expired at" : access_token_expired_at,
-        "refresh token" : refresh_token,
-        "team number" : team_number,
+        "athlete_id" : athlete_id,
+        "access_token" : access_token,
+        "access_token_expired_at" : access_token_expired_at,
+        "refresh_token" : refresh_token,
+        "team_number" : team_number,
         "mileage" : mileage
     }
 
@@ -96,11 +96,11 @@ def main():
     #can reuse this dictionary to add ppl
     person = {
         "name" : name,
-        "athlete id" : athlete_id,
-        "access token" : access_token,
-        "access token expired at" : access_token_expired_at,
-        "refresh token" : refresh_token,
-        "team number" : team_number,
+        "athlete_id" : athlete_id,
+        "access_token" : access_token,
+        "access_token_expired_at" : access_token_expired_at,
+        "refresh_token" : refresh_token,
+        "team_number" : team_number,
         "mileage" : mileage
     }
 

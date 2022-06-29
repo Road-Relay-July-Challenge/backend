@@ -23,10 +23,10 @@ def verify():
 
     person = {
         "name": response.get('athlete').get('firstname') + " " + response.get('athlete').get('lastname'),
-        "athlete id": response.get('athlete').get('id'),
-        "access token": response.get('access_token'),
-        "access token expired at": response.get('expires_at'),
-        "refresh token": response.get("refresh_token"),
+        "athlete_id": response.get('athlete').get('id'),
+        "access_token": response.get('access_token'),
+        "access_token_expired_at": response.get('expires_at'),
+        "refresh_token": response.get("refresh_token"),
         "mileage": 0
     }
 
