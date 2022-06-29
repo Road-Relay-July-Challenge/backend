@@ -16,18 +16,20 @@ def test():
         'Age' : 21
     })
 
+#take in a dictionary and adds person to database with specified fields
 def add_person(person):
     doc_ref = db.collection('Users').document(person.get("name"))
     doc_ref.set({
         "name" : person.get("name"),
-        "athlete id" : person.get("athlete id"),
-        "access token" : person.get("access token"),
-        "access token expired at" : person.get("access token expired at"),
-        "refresh token" : person.get("refresh token"),
-        "team number" : person.get("team number"),
+        "athlete_id" : person.get("athlete id"),
+        "access_token" : person.get("access token"),
+        "access_token_expired_at" : person.get("access token expired at"),
+        "refresh_token" : person.get("refresh token"),
+        "team_number" : person.get("team number"),
         "mileage" : person.get("mileage"),
     })
 
+#returns a list of all the names
 def get_all_names():
     users = db.collection('Users').stream()
     names = []
@@ -36,23 +38,22 @@ def get_all_names():
     print(names)
     return names
 
-
-def update_mileage(name, num):
-    doc_ref = db.collection('Users').document(name)
+#used to update any data. example to update refresh token to 12345, 
+#field_name = 'access_token' and updated_data = '12345'
+def update_data(user_name, field_name, updated_data):
+    doc_ref = db.collection('Users').document(user_name)
     doc_ref.update({
-        "mileage" : num
+        field_name : updated_data
     })
-
-
 
 def main():
     #test()
 
     #sample data
-    name = "wen feng"
+    name = "jason"
     athlete_id = '179456'
-    access_token = '123@123'
-    access_token_expired_at = '456@456'
+    access_token = '123123'
+    access_token_expired_at = '456456'
     refresh_token = '999'
     team_number = 2
     mileage = 0
@@ -69,8 +70,10 @@ def main():
     }
 
     #add_person(person)
-    #update_mileage("zhen hong", 100)
-    get_all_names()
+    #update_mileage("wen feng", 1200)
+    #get_all_names()
+    update_data("zhen hong", "mileage", "789")
+
 
 if __name__ == "__main__":
     main()
