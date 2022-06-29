@@ -34,10 +34,10 @@ def main():
 
     #sample data
     name = "zhen hong"
-    athlete_id = 179456
-    access_token = 123
-    access_token_expired_at = 456
-    refresh_token = 999
+    athlete_id = '179456'
+    access_token = '123@123'
+    access_token_expired_at = '456@456'
+    refresh_token = '999'
     team_number = 2
     mileage = 50
 
