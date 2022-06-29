@@ -1,7 +1,10 @@
 import requests
+from time import time
 from flask import Blueprint, request
 from routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
+from db import get_data, update_data
+from utils import return_json
 from utils import get_new_access_token, convert_from_greenwich_to_singapore_time
 
 individual_api = Blueprint('individual_api', __name__)
@@ -18,18 +21,29 @@ def get_hall_of_fame():
     # each a different function from DBs
     return
 
-@individual_api.route(UPDATE_INDIVIDUAL_TOTAL_MILEAGE)
+@individual_api.route(UPDATE_INDIVIDUAL_TOTAL_MILEAGE, methods=['POST'])
 def update_individual_total_mileage():
-    name = request.args.get('name')
+    name = request.form.get('name')
+    if name == None:
+        return return_json(False, f"Missing name field in request")
+
+    print(request.args)
     new_mileage = get_total_mileage_from_strava(name)
     # update DB
-    return str(new_mileage)
+    update_data(name, "mileage", new_mileage)
+    return return_json(True, f"Successfully updated {name}'s total mileage to {new_mileage} km.")
 
 def get_total_mileage_from_strava(name):
-    refresh_token = 123 # get refresh_token from DB, using athlete_id
-    access_token = get_new_access_token(refresh_token)
+    person = get_data(name)
+
+    access_token_expiry = person.get("access_token_expired_at")
+    if access_token_expiry >= time():
+        access_token = get_new_access_token(person.get("refresh_token"))
+    else:
+        access_token = person.get("access_token")
+
     headers = {
-        "Authorization": "Bearer " + access_token
+            "Authorization": "Bearer " + access_token
     }
     activityList = requests.get(ACTIVITIES_URL, headers=headers).json()
 
