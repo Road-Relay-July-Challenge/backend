@@ -88,13 +88,32 @@ def get_sorted_names():
         doc_ref = db.collection('Users').document(name)
         person_ref = doc_ref.get()
         mileage = person_ref.to_dict()['mileage']
+        team_number = person_ref.to_dict()['team_number']
         person = {
             "name" : name,
+            "team_number" : team_number,
             "mileage" : int(mileage)
         }
         unsorted_names.append(person)
-    sorted_names = sorted(sorted_names, key=lambda d: d["mileage"]) 
+    sorted_names = sorted(unsorted_names, key=lambda d: d["mileage"], reverse = True)
+    print(sorted_names)
     return sorted_names
+
+def get_all_team_number():
+    names = get_all_names()
+    name_list = []
+    for name in names:
+        doc_ref = db.collection('Users').document(name)
+        person_ref = doc_ref.get()
+        team_number = person_ref.to_dict()['team_number']
+        person = {
+            "name" : name,
+            "team_number" : team_number,
+        }
+        name_list.append(person)
+    print(name_list)
+    return(name_list)
+            
 
 ############## TEAM FUNCTIONS ######################
 
@@ -133,8 +152,7 @@ def get_sorted_teams():
             "team_mileage" : int(mileage)
         }
         unsorted_teams.append(team_data)
-    sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_mileage"]) 
-    print(sorted_teams)
+    sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_mileage"], reverse = True) 
     return sorted_teams
 
 
@@ -182,8 +200,9 @@ def main():
     #get_data("jason")
     #get_sorted_names()
     #add_team(sample_team)
-    update_team_data("3", "team_mileage", 3)
+    #update_team_data("3", "team_mileage", 3)
     #get_sorted_teams()
+    #get_all_team_number()
 
 
 if __name__ == "__main__":
