@@ -1,9 +1,9 @@
 import requests
 from time import time
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
-from db import get_data, update_data
+from db import get_data, update_data, get_sorted_names
 from utils import return_json
 from utils import get_new_access_token, convert_from_greenwich_to_singapore_time
 
@@ -11,9 +11,8 @@ individual_api = Blueprint('individual_api', __name__)
 
 @individual_api.route(LIST_ALL_INDIVIDUAL, methods=['GET'])
 def list_all_individual():
-    # get sorted array from DB
-    # return as json -> use jsonify()
-    return 
+    name_list = get_sorted_names()
+    return jsonify(name_list)
 
 @individual_api.route(GET_HALL_OF_FAME, methods=['GET'])
 def get_hall_of_fame():
