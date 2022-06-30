@@ -4,10 +4,11 @@ from flask import jsonify
 from config import CLIENT_ID, CLIENT_SECRET
 from routes import OAUTH_URL
 
-def return_json(isSuccess, returnMessage):
+def return_json(is_success, return_message, result_object):
     return jsonify(
-        success=isSuccess,
-        message=returnMessage
+        success=is_success,
+        message=return_message,
+        result=result_object
     )
 
 def get_new_access_token(refresh_token):

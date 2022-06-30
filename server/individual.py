@@ -12,7 +12,7 @@ individual_api = Blueprint('individual_api', __name__)
 @individual_api.route(LIST_ALL_INDIVIDUAL, methods=['GET'])
 def list_all_individual():
     name_list = get_sorted_names()
-    return jsonify(name_list)
+    return return_json(True, "Successfully retrieved all individuals.", name_list)
 
 @individual_api.route(GET_HALL_OF_FAME, methods=['GET'])
 def get_hall_of_fame():
@@ -24,10 +24,14 @@ def get_hall_of_fame():
 def update_individual_total_mileage():
     name = request.form.get('name')
     if name == None:
-        return return_json(False, f"Missing name field in request")
+        return return_json(False, f"Missing name field in request.")
 
     new_mileage = update_individual_total_mileage_from_strava(name)
-    return return_json(True, f"Successfully updated {name}'s total mileage to {new_mileage} km.")
+    person_mileage_object = {
+        "name": name,
+        "mileage": new_mileage
+    }
+    return return_json(True, f"Successfully updated {name}'s total mileage to {new_mileage} km.", person_mileage_object)
 
 def update_individual_total_mileage_from_strava(name):
     person = get_data(name)

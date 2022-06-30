@@ -33,7 +33,7 @@ def verify():
 
     add_person(person)
     print(f"Successfully added {person['name']}")
-    return return_json(True, f"Successfully added {person['name']}")
+    return return_json(True, f"Successfully added {person['name']}", person)
 
 @auth_api.route(REFRESH_ALL, methods=['GET'])
 def refresh_all():
