@@ -37,7 +37,7 @@ def update_individual_total_mileage_from_strava(name):
     person = get_data(name)
 
     access_token_expiry = person.get("access_token_expired_at")
-    if access_token_expiry >= time():
+    if access_token_expiry <= time():
         access_token = get_new_access_token(person.get("refresh_token"))
     else:
         access_token = person.get("access_token")
@@ -45,17 +45,21 @@ def update_individual_total_mileage_from_strava(name):
     headers = {
             "Authorization": "Bearer " + access_token
     }
-    activityList = requests.get(ACTIVITIES_URL, headers=headers).json()
+    activityRequest = requests.get(ACTIVITIES_URL, headers=headers)
+    if activityRequest.status_code != 200:
+        return return_json(
+            False, 
+            f"Failed to retrieve activities from Strava.\n Error code: {activityRequest.status_code}"
+        )
+    activityList = activityRequest.json()
 
     totalDistance = 0
     for activity in activityList:
-        # check if activity is within event time
         greenwich_time_string = activity.get('start_date')
         sg_time_object = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ")
         if sg_time_object < EVENT_START_TIME_OBJECT or sg_time_object > EVENT_END_TIME_OBJECT:
             continue
 
-        # check if activity is of run type
         if activity.get('type') != 'Run':
             continue
 
@@ -64,4 +68,4 @@ def update_individual_total_mileage_from_strava(name):
     totalDistance = int(totalDistance / 1000)
     update_data(name, "mileage", totalDistance)
 
-    return int(totalDistance / 1000)
+    return totalDistance
