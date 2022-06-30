@@ -181,7 +181,7 @@ def main():
     #get_data("jason")
     #get_sorted_names()
     #add_team(sample_team)
-    #update_team_data("1", "team_mileage", 5000)
+    update_team_data("3", "team_mileage", 3)
     #get_sorted_teams()
 
 
