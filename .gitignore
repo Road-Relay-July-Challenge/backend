@@ -8,6 +8,7 @@ bin-release/
 __pycache__/
 .settings/
 .env
+.DS_Store
 
 # Executables
 *.swf
@@ -18,3 +19,8 @@ __pycache__/
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
+
+/web-app/node_modules
+/.pnp
+.pnp.js
+/web-app/package-lock.json

@@ -135,6 +135,7 @@ def get_sorted_teams():
         unsorted_teams.append(team_data)
     sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_mileage"]) 
     print(sorted_teams)
+    return sorted_teams
 
 
 
