@@ -1,11 +1,21 @@
-import numbers
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-from grpc import access_token_call_credentials
+from firebase_admin import credentials, firestore, initialize_app
 
-cred = credentials.Certificate('./server/ServiceAccountKey.json')
-firebase_admin.initialize_app(cred)
+from config import AUTH_PROVIDER_X509_CERT_URL, AUTH_URI, CLIENT_EMAIL, CLIENT_ID, CLIENT_X509_CERT_URL, PRIVATE_KEY, PRIVATE_KEY_ID, PROJECT_ID, TOKEN_URI, TYPE
+cred = credentials.Certificate(
+    {
+        "type": TYPE,
+        "project_id": PROJECT_ID,
+        "private_key_id": PRIVATE_KEY_ID,
+        "private_key": PRIVATE_KEY,
+        "client_email": CLIENT_EMAIL,
+        "client_id": CLIENT_ID,
+        "auth_uri": AUTH_URI,
+        "token_uri": TOKEN_URI,
+        "auth_provider_x509_cert_url": AUTH_PROVIDER_X509_CERT_URL,
+        "client_x509_cert_url": CLIENT_X509_CERT_URL
+    }
+)
+initialize_app(cred)
 db = firestore.client()
 
 #testing stuff
