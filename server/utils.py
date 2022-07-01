@@ -1,8 +1,13 @@
+from turtle import update
 import requests
-import datetime
+from datetime import datetime, timedelta
 from flask import jsonify
 from config import CLIENT_ID, CLIENT_SECRET
 from routes import OAUTH_URL
+from db import update_multiple_datas
+
+def logger(message):
+    print(f"[{datetime.now()}] {message}")
 
 def return_json(is_success, return_message, result_object):
     return jsonify(
@@ -11,7 +16,7 @@ def return_json(is_success, return_message, result_object):
         result=result_object
     )
 
-def get_new_access_token(refresh_token):
+def get_new_access_token(refresh_token, name):
     payload = {
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
@@ -20,11 +25,21 @@ def get_new_access_token(refresh_token):
     }
 
     response = requests.post(OAUTH_URL, data=payload, verify=False)
-    new_access_token = response.json()['access_token']
-    return new_access_token
+    if response.status_code != 200:
+        return response.json()
+    logger(f"{name}'s token refreshed. New expiry: {response.json()['expires_at']}")
+
+    new_tokens = {
+        "access_token": response.json()['access_token'],
+        "refresh_token": response.json()['refresh_token'],
+        "access_token_expired_at": response.json()['expires_at']
+    }
+    update_multiple_datas(name, new_tokens)
+    
+    return response.json()['access_token']
 
 def convert_from_greenwich_to_singapore_time(timestring, format):
-    greenwich_time = datetime.datetime.strptime(timestring, format)
-    sg_time_object = greenwich_time + datetime.timedelta(hours=8)
+    greenwich_time = datetime.strptime(timestring, format)
+    sg_time_object = greenwich_time + timedelta(hours=8)
 
     return sg_time_object

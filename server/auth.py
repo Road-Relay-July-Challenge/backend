@@ -4,7 +4,7 @@ import urllib3
 from config import CLIENT_ID, CLIENT_SECRET
 from routes import VERIFY, OAUTH_URL, REFRESH_ALL
 from individual import update_individual_total_mileage_from_strava
-from utils import return_json
+from utils import return_json, logger
 from db import add_person, update_team_data
 
 auth_api = Blueprint('auth_api', __name__)
@@ -32,7 +32,7 @@ def verify():
     }
 
     add_person(person)
-    print(f"Successfully added {person['name']}")
+    logger(f"Successfully added {person['name']}")
     return return_json(True, f"Successfully added {person['name']}", person)
 
 @auth_api.route(REFRESH_ALL, methods=['POST'])

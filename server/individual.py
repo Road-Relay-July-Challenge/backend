@@ -1,11 +1,11 @@
+from distutils.ccompiler import new_compiler
 import requests
 from time import time
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
 from db import get_data, update_data, get_sorted_names
-from utils import return_json
-from utils import get_new_access_token, convert_from_greenwich_to_singapore_time
+from utils import get_new_access_token, convert_from_greenwich_to_singapore_time, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
 
@@ -26,11 +26,16 @@ def update_individual_total_mileage():
     if name == None:
         return return_json(False, f"Missing name field in request.")
 
-    new_mileage = update_individual_total_mileage_from_strava(name)
+    obj = update_individual_total_mileage_from_strava(name)
+    if not isinstance(obj, int):
+        return return_json(False, f"Error in updating mileage from Strava.", obj)
+
+    new_mileage = obj
     person_mileage_object = {
         "name": name,
         "mileage": new_mileage
     }
+
     return return_json(True, f"Successfully updated {name}'s total mileage to {new_mileage} km.", person_mileage_object)
 
 def update_individual_total_mileage_from_strava(name):
@@ -38,7 +43,11 @@ def update_individual_total_mileage_from_strava(name):
 
     access_token_expiry = person.get("access_token_expired_at")
     if access_token_expiry <= time():
-        access_token = get_new_access_token(person.get("refresh_token"))
+        logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
+        obj = get_new_access_token(person.get("refresh_token"), name)
+        if not isinstance(obj, str):
+            return obj
+        access_token = obj
     else:
         access_token = person.get("access_token")
 

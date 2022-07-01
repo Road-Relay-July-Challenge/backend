@@ -1,18 +1,18 @@
 from firebase_admin import credentials, firestore, initialize_app
+import config
 
-from config import AUTH_PROVIDER_X509_CERT_URL, AUTH_URI, CLIENT_EMAIL, CLIENT_ID, CLIENT_X509_CERT_URL, PRIVATE_KEY, PRIVATE_KEY_ID, PROJECT_ID, TOKEN_URI, TYPE
 cred = credentials.Certificate(
     {
-        "type": TYPE,
-        "project_id": PROJECT_ID,
-        "private_key_id": PRIVATE_KEY_ID,
-        "private_key": PRIVATE_KEY,
-        "client_email": CLIENT_EMAIL,
-        "client_id": CLIENT_ID,
-        "auth_uri": AUTH_URI,
-        "token_uri": TOKEN_URI,
-        "auth_provider_x509_cert_url": AUTH_PROVIDER_X509_CERT_URL,
-        "client_x509_cert_url": CLIENT_X509_CERT_URL
+        "type": config.DB_TYPE,
+        "project_id": config.DB_PROJECT_ID,
+        "private_key_id": config.DB_PRIVATE_KEY_ID,
+        "private_key": config.DB_PRIVATE_KEY,
+        "client_email": config.DB_CLIENT_EMAIL,
+        "client_id": config.DB_CLIENT_ID,
+        "auth_uri": config.DB_AUTH_URI,
+        "token_uri": config.DB_TOKEN_URI,
+        "auth_provider_x509_cert_url": config.DB_AUTH_PROVIDER_X509_CERT_URL,
+        "client_x509_cert_url": config.DB_CLIENT_X509_CERT_URL
     }
 )
 initialize_app(cred)
@@ -55,6 +55,10 @@ def update_data(user_name, field_name, updated_data):
     doc_ref.update({
         field_name : updated_data
     })
+
+def update_multiple_datas(user_name, updated_data_obj):
+    doc_ref = db.collection('Users').document(user_name)
+    doc_ref.update(updated_data_obj)
 
 #get name using athlete id, id input as string
 def get_name(id):

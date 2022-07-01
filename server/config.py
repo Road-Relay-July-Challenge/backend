@@ -13,13 +13,13 @@ EVENT_START_TIME_OBJECT = datetime.datetime.strptime("2022-06-24 00:00:00", "%Y-
 EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-23 23:59:59", "%Y-%m-%d %H:%M:%S")
 
 # db
-TYPE = "service_account"
-PROJECT_ID = os.environ.get("PROJECT_ID")
-PRIVATE_KEY_ID = os.environ.get("PRIVATE_KEY_ID")
-PRIVATE_KEY = os.environ.get("PRIVATE_KEY").replace('\\n', '\n')
-CLIENT_EMAIL = os.environ.get("CLIENT_EMAIL")
-CLIENT_ID = os.environ.get("CLIENT_ID")
-AUTH_URI = "https://accounts.google.com/o/oauth2/auth"
-TOKEN_URI = "https://oauth2.googleapis.com/token"
-AUTH_PROVIDER_X509_CERT_URL = "https://www.googleapis.com/oauth2/v1/certs"
-CLIENT_X509_CERT_URL = os.environ.get("CLIENT_X509_CERT_URL")
+DB_TYPE = "service_account"
+DB_PROJECT_ID = os.environ.get("DB_PROJECT_ID")
+DB_PRIVATE_KEY_ID = os.environ.get("DB_PRIVATE_KEY_ID")
+DB_PRIVATE_KEY = os.environ.get("DB_PRIVATE_KEY").replace('\\n', '\n')
+DB_CLIENT_EMAIL = os.environ.get("DB_CLIENT_EMAIL")
+DB_CLIENT_ID = os.environ.get("DB_CLIENT_ID")
+DB_AUTH_URI = "https://accounts.google.com/o/oauth2/auth"
+DB_TOKEN_URI = "https://oauth2.googleapis.com/token"
+DB_AUTH_PROVIDER_X509_CERT_URL = "https://www.googleapis.com/oauth2/v1/certs"
+DB_CLIENT_X509_CERT_URL = os.environ.get("DB_CLIENT_X509_CERT_URL")
