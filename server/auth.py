@@ -5,7 +5,7 @@ from config import CLIENT_ID, CLIENT_SECRET
 from routes import VERIFY, OAUTH_URL, REFRESH_ALL
 from individual import update_individual_total_mileage_from_strava
 from utils import return_json
-from db import add_person
+from db import add_person, update_team_data
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -35,7 +35,7 @@ def verify():
     print(f"Successfully added {person['name']}")
     return return_json(True, f"Successfully added {person['name']}", person)
 
-@auth_api.route(REFRESH_ALL, methods=['GET'])
+@auth_api.route(REFRESH_ALL, methods=['POST'])
 def refresh_all():
     # make dictionary of all team and mileage = 0 
     teamMileageDict = {}
@@ -54,7 +54,7 @@ def refresh_all():
     
     # for each team, if mileage of team != updated mileage, update DB 
     for team in teamMileageDict.keys():
-        # update_data()
-        continue
-    return
+        update_team_data(team.get("team_number"), "mileage", team.get("mileage"))
+
+    return return_json(True, f"Successfully refreshed all teams' mileage.", teamMileageDict)
     
