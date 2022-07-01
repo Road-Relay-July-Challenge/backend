@@ -41,12 +41,17 @@ def update_individual_total_mileage():
 def update_individual_total_mileage_from_strava(name):
     person = get_data(name)
 
-    access_token_expiry = person.get("access_token_expired_at")
+    access_token_expiry = int(person.get("access_token_expired_at"))
     if access_token_expiry <= time():
         logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
         obj = get_new_access_token(person.get("refresh_token"), name)
         if not isinstance(obj, str):
-            return obj
+            return return_json(
+                False, 
+                f"Failed to refresh token from Strava.",
+                obj
+            )
+        
         access_token = obj
     else:
         access_token = person.get("access_token")
@@ -58,10 +63,11 @@ def update_individual_total_mileage_from_strava(name):
     if activityRequest.status_code != 200:
         return return_json(
             False, 
-            f"Failed to retrieve activities from Strava.\n Error code: {activityRequest.status_code}"
+            f"Failed to retrieve activities from Strava.\n Error code: {activityRequest.status_code}",
+            activityRequest.json()
         )
+    
     activityList = activityRequest.json()
-
     totalDistance = 0
     for activity in activityList:
         greenwich_time_string = activity.get('start_date')

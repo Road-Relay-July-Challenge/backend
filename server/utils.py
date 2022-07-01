@@ -32,7 +32,7 @@ def get_new_access_token(refresh_token, name):
     new_tokens = {
         "access_token": response.json()['access_token'],
         "refresh_token": response.json()['refresh_token'],
-        "access_token_expired_at": response.json()['expires_at']
+        "access_token_expired_at": int(response.json()['expires_at'])
     }
     update_multiple_datas(name, new_tokens)
     

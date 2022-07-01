@@ -5,7 +5,7 @@ from config import CLIENT_ID, CLIENT_SECRET
 from routes import VERIFY, OAUTH_URL, REFRESH_ALL
 from individual import update_individual_total_mileage_from_strava
 from utils import return_json, logger
-from db import add_person, update_team_data
+from db import add_person, get_all_team_number, update_team_data
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -37,24 +37,28 @@ def verify():
 
 @auth_api.route(REFRESH_ALL, methods=['POST'])
 def refresh_all():
-    # make dictionary of all team and mileage = 0 
     teamMileageDict = {}
+    athletes_and_team_number = get_all_team_number()
 
-    # get collection of all participants from DB
-    all_athletes = []
-    # collection contains: participant_name, mileage, team_number, refresh_token
-    for athlete in all_athletes:
-        mileage = update_individual_total_mileage_from_strava(athlete.get("name"))
+    for athlete in athletes_and_team_number:
+        obj = update_individual_total_mileage_from_strava(athlete.get("name"))
+        if not isinstance(obj, int):
+            return obj
+        mileage = obj
+
         team_number = athlete.get("team_number")
 
-        if teamMileageDict.has_key(team_number):
+        if team_number in teamMileageDict:
             teamMileageDict[team_number] = teamMileageDict[team_number] + mileage
         else:
             teamMileageDict[team_number] = mileage
     
-    # for each team, if mileage of team != updated mileage, update DB 
-    for team in teamMileageDict.keys():
-        update_team_data(team.get("team_number"), "mileage", team.get("mileage"))
-
-    return return_json(True, f"Successfully refreshed all teams' mileage.", teamMileageDict)
+    # for each team, if mileage of team != updated mileage, update DB
+    for team_number in teamMileageDict.keys():
+        if not isinstance(team_number, int):
+            continue
+        update_team_data(team_number, "mileage", teamMileageDict.get(team_number))
+        
+    logger("Successfully refreshed all teams' mileage")
+    return return_json(True, f"Successfully refreshed all teams' mileage", teamMileageDict)
     
