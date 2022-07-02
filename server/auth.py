@@ -1,11 +1,11 @@
 from flask import Blueprint, request
 import requests
 import urllib3
-from config import CLIENT_ID, CLIENT_SECRET
-from routes import VERIFY, OAUTH_URL, REFRESH_ALL
-from individual import update_individual_total_mileage_from_strava
-from utils import return_json, logger
-from db import add_person, get_all_team_number, update_team_data
+from server.config import CLIENT_ID, CLIENT_SECRET
+from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL
+from server.individual import update_individual_total_mileage_from_strava
+from server.utils import return_json, logger
+from server.db import add_person, get_all_team_number, update_team_data
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify

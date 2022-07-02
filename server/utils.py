@@ -1,10 +1,9 @@
-from turtle import update
 import requests
 from datetime import datetime, timedelta
 from flask import jsonify
-from config import CLIENT_ID, CLIENT_SECRET
-from routes import OAUTH_URL
-from db import update_multiple_datas
+from server.config import CLIENT_ID, CLIENT_SECRET
+from server.routes import OAUTH_URL
+from server.db import update_multiple_datas
 
 def logger(message):
     print(f"[{datetime.now()}] {message}")

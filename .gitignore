@@ -23,4 +23,4 @@ __pycache__/
 /client/node_modules
 /.pnp
 .pnp.js
-/client/package-lock.json
+# /web-app/package-lock.json
