@@ -14,7 +14,7 @@ export const cleanUpAuthToken = (str) => {
 };
 
 export default function registerForm() {
-  const { REACT_APP_CLIENT_ID } = process.env;
+  // const { REACT_APP_CLIENT_ID } = process.env;
   const redirectUrl = "https://rrjc-app-herokuapp.com/auth/verify";
 
   const theme = createTheme({
@@ -59,7 +59,7 @@ export default function registerForm() {
   }));
 
   const handleLogin = async () => {
-    window.location = `http://www.strava.com/oauth/authorize?client_id=${REACT_APP_CLIENT_ID}&response_type=code&redirect_uri=${redirectUrl}/exchange_token&approval_prompt=force&scope=read`;
+    window.location = `http://www.strava.com/oauth/authorize?client_id=88786&response_type=code&redirect_uri=${redirectUrl}/exchange_token&approval_prompt=force&scope=read`;
   };
 
   return (
