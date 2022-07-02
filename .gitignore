@@ -20,7 +20,7 @@ __pycache__/
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
 
-/web-app/node_modules
+/client/node_modules
 /.pnp
 .pnp.js
 # /web-app/package-lock.json
