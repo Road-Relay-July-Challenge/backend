@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
-from routes import LIST_ALL_TEAM
-from db import get_sorted_teams
-from utils import return_json
+from server.routes import LIST_ALL_TEAM
+from server.db import get_sorted_teams
+from server.utils import return_json
 
 team_api = Blueprint('team_api', __name__)
 

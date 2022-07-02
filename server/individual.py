@@ -1,10 +1,10 @@
 import requests
 from time import time
 from flask import Blueprint, request
-from routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
-from config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
-from db import get_data, update_data, get_sorted_names
-from utils import get_new_access_token, convert_from_greenwich_to_singapore_time, logger, return_json
+from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
+from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
+from server.db import get_data, update_data, get_sorted_names
+from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
 

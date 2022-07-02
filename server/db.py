@@ -1,5 +1,5 @@
 from firebase_admin import credentials, firestore, initialize_app
-import config
+import server.config as config
 
 cred = credentials.Certificate(
     {
