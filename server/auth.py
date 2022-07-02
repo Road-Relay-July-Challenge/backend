@@ -20,8 +20,11 @@ def verify():
         'code': authorizationCode,
         'grant_type': 'authorization_code'
     }
-    response = requests.post(OAUTH_URL, data=payload, verify=False).json()
-
+    response = requests.post(OAUTH_URL, data=payload, verify=False)
+    if response.status_code != 200:
+        return return_json(False, f"Failed to retrieve athlete.", response.json())
+    response = response.json()
+    
     person = {
         "name": response.get('athlete').get('firstname') + " " + response.get('athlete').get('lastname'),
         "athlete_id": response.get('athlete').get('id'),
