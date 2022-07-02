@@ -9,6 +9,7 @@ __pycache__/
 .settings/
 .env
 .DS_Store
+server/venv/
 
 # Executables
 *.swf

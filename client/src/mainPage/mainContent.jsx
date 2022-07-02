@@ -79,8 +79,8 @@ const theme = createTheme({
 });
 
 export default function MainContent() {
-  const [tabValue, setTabValue] = useState(1);
-  const [leftTab, setLeftTab] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
+  const [leftTab, setLeftTab] = useState(true);
   const containerRef = useRef(null);
 
   const handleChange = (event, newValue) => {

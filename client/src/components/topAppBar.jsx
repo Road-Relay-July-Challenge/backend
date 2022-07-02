@@ -98,7 +98,7 @@ const TopAppBar = () => {
             >
               {pages.map((page, index) => (
                 <MenuItem
-                  key={index}
+                  key={page + "1"}
                   sx={{ width: "100vw" }}
                   onClick={() => handleCloseNavMenu(page)}
                 >
@@ -134,7 +134,7 @@ const TopAppBar = () => {
             {pages.map((page, index) => (
               <>
                 <Button
-                  key={index}
+                  key={page}
                   onClick={() => handleCloseNavMenu(page)}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >

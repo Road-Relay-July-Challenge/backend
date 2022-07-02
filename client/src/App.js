@@ -1,6 +1,7 @@
 import "./App.css";
 import MainPage from "./mainPage/mainPage";
 import RegisterPage from "./registerPage/registerPage";
+import RedirectPage from "./redirectPage/redirectPage";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,6 +17,10 @@ function App() {
           <Route exact path="/home" element={<MainPage />}></Route>
           <Route exact path="/register" element={<RegisterPage />}></Route>
           <Route exact path="/contact" element={<MainPage />}></Route>
+          <Route
+            path="/redirect/exchange_token"
+            element={<RedirectPage />}
+          ></Route>
           <Route path="*" element={<Navigate replace to="/home" />} />
         </Routes>
       </Router>

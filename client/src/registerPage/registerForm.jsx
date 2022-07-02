@@ -3,169 +3,98 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+import { createTheme } from "@mui/material/styles";
+import { purple, grey, green, red } from "@mui/material/colors";
+import { styled } from "@mui/material/styles";
+
+export const cleanUpAuthToken = (str) => {
+  return str.split("&")[1].slice(5);
+};
 
 export default function registerForm() {
+  const { REACT_APP_CLIENT_ID } = process.env;
+  const redirectUrl = "https://rrjc-app-herokuapp.com/auth/verify";
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        // Purple and green play nicely together.
+        main: grey[100],
+        contrastText: "#ffffff",
+      },
+      secondary: {
+        // This is green.A700 as hex.
+        main: "#ffffff",
+        contrastText: red[500],
+      },
+      up: {
+        main: green[500],
+      },
+      down: {
+        main: red[500],
+      },
+      nothing: {
+        main: "#ffffff",
+      },
+    },
+    overrides: {
+      MuiButton: {
+        secondary: {
+          main: "#ffffff",
+          contrastText: red[500],
+        },
+      },
+    },
+  });
+
+  const ColorButton = styled(Button)(() => ({
+    color: "#ffffff",
+    backgroundColor: "#000000",
+    "&:focus": {
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    },
+  }));
+
+  const handleLogin = async () => {
+    window.location = `http://www.strava.com/oauth/authorize?client_id=${REACT_APP_CLIENT_ID}&response_type=code&redirect_uri=${redirectUrl}/exchange_token&approval_prompt=force&scope=read`;
+  };
+
   return (
     <Box
       component="form"
       height="auto"
-      sx={{
-        backgroundColor: "white",
-      }}
+      sx={
+        {
+          // backgroundColor: "white",
+        }
+      }
       noValidate
       autoComplete="off"
       width="90%"
       margin="20px auto"
     >
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <Typography
-          variant="h5"
-          noWrap
-          component="a"
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-              justifyContent: "center",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-          }}
-        >
-          Strava Registration Form
+      <Stack spacing={2}>
+        <Typography variant="h6" align="center" gutterBottom component="div">
+          Strava Registration
         </Typography>
-        <Typography
-          variant="h7"
-          component="a"
-          mt={3}
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-            padding: 3,
-          }}
-        >
-          Follow the steps below to link your strava account so that the running
-          data could be collected.
+
+        <Typography variant="body1" gutterBottom component="div">
+          Click on the button below to link RRJC Web App with your strava
+          account.
         </Typography>
-        <Typography
-          variant="h7"
-          component="a"
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-            marginTop: 8,
-            padding: 3,
-          }}
+
+        <ColorButton
+          variant="contained"
+          onClick={() => handleLogin()}
+          sx={{ backgroundColor: "#000000" }}
+          disableRipple={true}
         >
-          1. Copy the link provided below and paste it into your browser.
-        </Typography>
-        <Typography
-          variant="h7"
-          component="a"
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-            marginTop: 1,
-            wordBreak: "break-all",
-            padding: 3,
-          }}
-        >
-          {
-            "https://www.strava.com/oauth/authorize?client_id=51907&redirect_uri=http://localhost&response_type=code&scope=activity:read_all"
-          }
-        </Typography>
-        <Button
-          onClick={() => {
-            navigator.clipboard.writeText(
-              "https://www.strava.com/oauth/authorize?client_id=51907&redirect_uri=http://localhost&response_type=code&scope=activity:read_all"
-            );
-          }}
-          variant="text"
-        >
-          Click to copy the link above.
-        </Button>
-        <Typography
-          variant="h7"
-          component="a"
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-            marginTop: 8,
-            padding: 3,
-          }}
-        >
-          2. There should be a page asking you for permission. You will also be
-          asked to sign in to your strava account.
-        </Typography>
-        <Typography
-          variant="h7"
-          component="a"
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-            marginTop: 8,
-            padding: 3,
-          }}
-        >
-          3. After clicking "Authorize", it will bring you to another page that
-          says "This site can't be reached." Ignore the content on the webpage
-          and past the content in the url bar into the text field below.
-        </Typography>
-        <Typography
-          variant="h7"
-          component="a"
-          sx={{
-            display: {
-              xs: "flex",
-              md: "flex",
-            },
-            fontWeight: 1500,
-            color: "inherit",
-            textDecoration: "none",
-            marginTop: 2,
-            wordBreak: "break-all",
-            padding: 3,
-          }}
-        >
-          The URL would look something like this
-          http://localhost/?state=&code=54715678a2af7b7ecc998dde3f9453a08eaaa1e4&scope=read,activity:read_all
-        </Typography>
-        <div style={{ display: "flex", width: "90%", padding: "auto auto" }}>
-          <TextField
-            id="standard-helperText"
-            label="Paste the content in url bar here"
-            variant="filled"
-            sx={{ width: "90%" }}
-          />
-          <Button variant="text">Submit</Button>
-        </div>
-      </div>
+          Connect to Strava
+        </ColorButton>
+      </Stack>
     </Box>
   );
 }
