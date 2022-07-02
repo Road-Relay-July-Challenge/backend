@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect
 import requests
 import urllib3
+import urllib
 from server.config import CLIENT_ID, CLIENT_SECRET
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL
 from server.individual import update_individual_total_mileage_from_strava
@@ -20,7 +21,7 @@ def authorize():
     }
     return redirect('{}?{}'.format(
         'https://www.strava.com/oauth/authorize',
-        urllib3.parse.urlencode(params)
+        urllib.parse.urlencode(params)
     ))
 
 @auth_api.route(VERIFY, methods=['GET'])
