@@ -12,6 +12,7 @@ app.register_blueprint(individual_api, url_prefix='/individual')
 api = Api(app)
 
 @app.route("/", defaults={'path':''})
+@app.route('/<path:path>')
 def serve(path):
     return send_from_directory(app.static_folder,'index.html')
 
