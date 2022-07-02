@@ -59,7 +59,7 @@ export default function registerForm() {
   }));
 
   const handleLogin = async () => {
-    window.location = `http://www.strava.com/oauth/authorize?client_id=88786&response_type=code&redirect_uri=${redirectUrl}/exchange_token&approval_prompt=force&scope=read`;
+    window.location = `http://www.strava.com/oauth/authorize?client_id=88786&response_type=code&redirect_uri=${redirectUrl}&approval_prompt=force&scope=activity:read_all`;
   };
 
   return (
