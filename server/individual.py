@@ -1,4 +1,3 @@
-from distutils.ccompiler import new_compiler
 import requests
 from time import time
 from flask import Blueprint, request

@@ -1,4 +1,3 @@
-from turtle import update
 import requests
 from datetime import datetime, timedelta
 from flask import jsonify
