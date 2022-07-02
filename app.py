@@ -1,8 +1,8 @@
 from flask import Flask
-from auth import auth_api
-from team import team_api
-from individual import individual_api
-from config import DEBUG
+from server.auth import auth_api
+from server.team import team_api
+from server.individual import individual_api
+from server.config import DEBUG
 
 app = Flask(__name__, static_url_path='', static_folder='server/build')
 app.register_blueprint(auth_api, url_prefix='/auth')
