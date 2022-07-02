@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TopAppBar from "../components/topAppBar";
 import RedirectContent from "./redirectContent";
 import _ from "lodash";
-import { testAuthGetter, getUserData } from "../utils/httpsFunction";
+import { testAuthGetter, getUserData, authGetter } from "../utils/httpsFunction";
 
 const RedirectPage = (props) => {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -21,13 +21,13 @@ const RedirectPage = (props) => {
         // Save the Auth Token to the Store (it's located under 'search' for some reason)
         const stravaAuthToken = cleanUpAuthToken(window.location.search);
         console.log(stravaAuthToken);
-        const tokens = await testAuthGetter(stravaAuthToken);
+        const tokens = await authGetter(stravaAuthToken);
         console.log(tokens);
-        const accessToken = tokens.access_token;
-        const userID = tokens.athlete.id;
-        const user = await getUserData(userID, accessToken);
-        console.log(user);
-        if (user.status === 200) {
+        // const accessToken = tokens.access_token;
+        // const userID = tokens.athlete.id;
+        // const user = await getUserData(userID, accessToken);
+        // console.log(user);
+        if (tokens.status === 200 && tokens.success) {
           console.log("You have successfully registered your strava account.");
           setIsSuccess(true);
         } else {
