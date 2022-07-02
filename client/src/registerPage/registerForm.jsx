@@ -87,7 +87,7 @@ export default function registerForm() {
         </Typography>
 
         <ColorButton
-          href="https://rrjc-app.herokuapp.com/authorize"
+          href="https://rrjc-app.herokuapp.com/auth/authorize"
           variant="contained"
           // onClick={() => handleLogin()}
           sx={{ backgroundColor: "#000000" }}
