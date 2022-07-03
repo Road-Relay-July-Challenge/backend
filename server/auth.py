@@ -4,7 +4,7 @@ import urllib3
 import urllib
 from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL
-from server.individual import update_individual_total_mileage_from_strava
+from server.individual import update_individual_weekly_mileage_from_strava
 from server.utils import return_json, logger
 from server.db import add_mileages, add_person, get_users_sorted_by_mileage, update_team_data
 
@@ -73,7 +73,7 @@ def refresh_all():
     athletes_and_team_number = get_users_sorted_by_mileage()
 
     for athlete in athletes_and_team_number:
-        obj = update_individual_total_mileage_from_strava(athlete.get("name"))
+        obj = update_individual_weekly_mileage_from_strava(athlete.get("name"))
         if not isinstance(obj, int):
             return obj
         mileage = obj

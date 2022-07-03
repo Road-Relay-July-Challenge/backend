@@ -45,12 +45,25 @@ def add_person(person):
 def add_mileages(mileages):
     doc_ref = db.collection('Mileages').document(str(mileages.get("athlete_id")))
     doc_ref.set({
-        "athlete_id": mileages.get("athlete_id"),
+        "athlete_id": mileages.get("athlete_id")
+    })
+
+    doc_ref = db.collection('Mileages').document(str(mileages.get("athlete_id"))).collection('weeks').document(str(mileages.get("week")))
+    doc_ref.set({
         "week": mileages.get("week"),
         "true_mileage": mileages.get("true_mileage"),
         "contributed_mileage": mileages.get("contributed_mileage"),
         "special_mileage": mileages.get("special_mileage") 
     })
+
+def get_mileages(athlete_id):
+    to_return = []
+    weeks = db.collection('Mileages').document(str(athlete_id)).collection('weeks').stream()
+    for week in weeks:
+        to_return.append(week.to_dict())
+
+    print(to_return)
+    return to_return
 
 #returns a list of all the names
 def get_all_names():
@@ -72,6 +85,16 @@ def update_multiple_datas(athlete_id, updated_data_obj):
     doc_ref = db.collection('Users').document(str(athlete_id))
     doc_ref.update(updated_data_obj)
 
+def update_mileage_data(athlete_id, week, field_name, updated_data):
+    doc_ref = db.collection('Mileages').document(str(athlete_id)).collection('weeks').document(str(week))
+    doc_ref.update({
+        field_name : updated_data
+    })
+
+def update_multiple_mileage_datas(athlete_id, week, updated_data_obj):
+    doc_ref = db.collection('Mileages').document(str(athlete_id)).collection('weeks').document(str(week))
+    doc_ref.update(updated_data_obj)
+
 #get user's name using athlete id
 def get_user_name(athlete_id):
     doc_ref = db.collection('Users').document(str(athlete_id))
@@ -90,12 +113,13 @@ def get_data(athlete_id):
     team_number = person_ref.to_dict()['team_number']
     total_true_mileage = person_ref.to_dict()["total_true_mileage"]
     total_contributed_mileage = person_ref.to_dict()["total_contributed_mileage"]
-    multiplier = person_ref.to_dict()["total"]
+    multiplier = person_ref.to_dict()["multiplier"]
     
-    doc_ref = db.collection('Mileages').document(str(athlete_id)).stream()
     weekly_mileages = []
-    for row in doc_ref:
-        weekly_mileages.append(row)
+    doc_ref = db.collection('Mileages').document(str(athlete_id)).collection('weeks').stream()
+    for week in doc_ref:
+        print(week.to_dict())
+        weekly_mileages.append(week.to_dict())
 
     person = {
         "name" : name,

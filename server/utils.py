@@ -42,3 +42,6 @@ def convert_from_greenwich_to_singapore_time(timestring, format):
     sg_time_object = greenwich_time + timedelta(hours=8)
 
     return sg_time_object
+
+def get_week_from_date_object(date_object):
+    return date_object.isocalendar()[1]

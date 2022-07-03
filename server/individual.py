@@ -1,10 +1,11 @@
+from urllib import response
 import requests
 from time import time
 from flask import Blueprint, request
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
-from server.db import get_data, update_data, get_users_sorted_by_mileage
-from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, logger, return_json
+from server.db import get_data, get_mileages, get_users_sorted_by_mileage, update_data, update_mileage_data, update_multiple_datas, update_multiple_mileage_datas
+from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
 
@@ -34,26 +35,27 @@ def get_hall_of_fame():
 
 @individual_api.route(UPDATE_INDIVIDUAL_TOTAL_MILEAGE, methods=['POST'])
 def update_individual_total_mileage():
-    name = request.form.get('name')
-    if name == None:
-        return return_json(False, f"Missing name field in request.")
+    athlete_id = request.form.get('athlete_id')
+    if athlete_id == None:
+        return return_json(False, f"Missing athlete_id in request.")
 
-    obj = update_individual_total_mileage_from_strava(name)
-    if not isinstance(obj, int):
-        return return_json(False, f"Error in updating mileage from Strava.", obj)
+    response = update_individual_weekly_mileage_from_strava(athlete_id)
+    if "success" in response:
+        return return_json(False, f"Error in updating mileage from Strava.", response)
 
-    new_mileage = obj
+    new_mileage_object = update_individual_total_mileage_from_db(athlete_id)
     person_mileage_object = {
-        "name": name,
-        "mileage": new_mileage
+        "athlete_id": athlete_id,
+        "mileage": new_mileage_object
     }
 
-    return return_json(True, f"Successfully updated {name}'s total mileage to {new_mileage} km.", person_mileage_object)
+    return return_json(True, f"Successfully updated {athlete_id}'s total mileage.", person_mileage_object)
 
-def update_individual_total_mileage_from_strava(name):
-    person = get_data(name)
+def update_individual_weekly_mileage_from_strava(athlete_id):
+    person = get_data(athlete_id)
 
     access_token_expiry = int(person.get("access_token_expired_at"))
+    name = person.get("name")
     if access_token_expiry <= time():
         logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
         obj = get_new_access_token(person.get("refresh_token"), name)
@@ -80,7 +82,7 @@ def update_individual_total_mileage_from_strava(name):
         )
     
     activityList = activityRequest.json()
-    totalDistance = 0
+    weekly_mileage_dict = {}
     for activity in activityList:
         greenwich_time_string = activity.get('start_date')
         sg_time_object = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ")
@@ -90,9 +92,35 @@ def update_individual_total_mileage_from_strava(name):
         if activity.get('type') != 'Run':
             continue
 
-        totalDistance = totalDistance + activity.get('distance')
+        week = get_week_from_date_object(sg_time_object)
+        if week in weekly_mileage_dict:
+            weekly_mileage_dict[week] = weekly_mileage_dict[week] + activity.get('distance')
+        else:
+            weekly_mileage_dict[week] = activity.get('distance')
 
-    totalDistance = int(totalDistance / 1000)
-    update_data(name, "mileage", totalDistance)
+    multiplier = person.get("multiplier")
+    for week in weekly_mileage_dict:
+        to_update = {
+            "true_mileage": round(int(weekly_mileage_dict[week]) / 1000, 2),
+            "contributed_mileage": round(int(weekly_mileage_dict[week] * multiplier) / 1000, 2)
+        }
+        update_multiple_mileage_datas(athlete_id, week, to_update)
 
-    return totalDistance
+    return weekly_mileage_dict
+
+def update_individual_total_mileage_from_db(athlete_id):
+    total_true_mileage = 0
+    total_contributed_mileage = 0
+    
+    mileages = get_mileages(athlete_id)
+    for week in mileages: 
+        total_true_mileage = total_true_mileage + week.get("true_mileage")
+        total_contributed_mileage = total_contributed_mileage + week.get("contributed_mileage") + week.get("special_mileage")
+    
+    mileage_object = {
+        "total_true_mileage": total_true_mileage,
+        "total_contributed_mileage": total_contributed_mileage
+    }
+    update_multiple_datas(athlete_id, mileage_object)
+
+    return mileage_object
