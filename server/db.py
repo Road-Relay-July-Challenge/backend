@@ -163,6 +163,10 @@ def update_team_data(team_id, field_name, updated_data):
         field_name : updated_data
     })
 
+def update_multiple_team_datas(team_id, update_obj):
+    doc_ref = db.collection('Teams').document(str(team_id))
+    doc_ref.update(update_obj)
+
 def get_all_team_id():
     team_id = db.collection('Teams').stream()
     teams = []
