@@ -19,10 +19,7 @@ def authorize():
         'response_type': 'code',
         'scope': 'activity:read_all'
     }
-    return redirect('{}?{}'.format(
-        'https://www.strava.com/oauth/authorize',
-        urllib.parse.urlencode(params)
-    ))
+    return redirect("https://www.strava.com/oauth/authorize?client_id=88786&redirect_uri=https://rrjc-web.vercel.app/redirect/exchange_token&response_type=code&scope=activity:read_all")
 
 @auth_api.route(VERIFY, methods=['GET'])
 def verify():
