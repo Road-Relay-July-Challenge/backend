@@ -65,7 +65,7 @@ def verify():
 
     logger(f"Successfully initialized {person['name']}'s mileages.")
     
-    return return_json(True, f"Successfully added {person['name']}", person)
+    return return_json(True, f"Successfully added {person['name']}", [person, mileages])
 
 @auth_api.route(REFRESH_ALL, methods=['POST'])
 def refresh_all():
