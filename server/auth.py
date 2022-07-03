@@ -2,11 +2,11 @@ from flask import Blueprint, request, redirect
 import requests
 import urllib3
 import urllib
-from server.config import CLIENT_ID, CLIENT_SECRET
+from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL
-from server.individual import update_individual_total_mileage_from_strava
+from server.individual import update_individual_weekly_mileage_from_strava
 from server.utils import return_json, logger
-from server.db import add_person, get_all_team_number, update_team_data
+from server.db import add_mileages, add_person, get_users_sorted_by_mileage, update_team_data
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -45,20 +45,35 @@ def verify():
         "access_token": response.get('access_token'),
         "access_token_expired_at": response.get('expires_at'),
         "refresh_token": response.get("refresh_token"),
-        "mileage": 0
+        "team_number" : 0,
+        "total_true_mileage" : 0,
+        "total_contributed_mileage": 0,
+        "multiplier": 1,
     }
-
     add_person(person)
     logger(f"Successfully added {person['name']}")
-    return return_json(True, f"Successfully added {person['name']}", person)
+
+    for week in EVENT_WEEKS:
+        mileages = {
+            "athlete_id": response.get('athlete').get('id'),
+            "week": week,
+            "true_mileage": 0,
+            "contributed_mileage": 0,
+            "special_mileage": 0 
+        }
+        add_mileages(mileages)
+
+    logger(f"Successfully initialized {person['name']}'s mileages.")
+    
+    return return_json(True, f"Successfully added {person['name']}", [person, mileages])
 
 @auth_api.route(REFRESH_ALL, methods=['POST'])
 def refresh_all():
     teamMileageDict = {}
-    athletes_and_team_number = get_all_team_number()
+    athletes_and_team_number = get_users_sorted_by_mileage()
 
     for athlete in athletes_and_team_number:
-        obj = update_individual_total_mileage_from_strava(athlete.get("name"))
+        obj = update_individual_weekly_mileage_from_strava(athlete.get("name"))
         if not isinstance(obj, int):
             return obj
         mileage = obj
