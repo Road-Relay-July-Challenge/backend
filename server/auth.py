@@ -70,8 +70,8 @@ def refresh_all():
     athletes_and_team_number = get_users_sorted_by_mileage()
 
     for athlete in athletes_and_team_number:
-        obj = update_individual_weekly_mileage_from_strava(athlete.get("name"))
-        if not isinstance(obj, int):
+        obj = update_individual_weekly_mileage_from_strava(athlete.get("athlete_id"))
+        if not isinstance(obj, dict):
             return obj
         mileage = obj
 

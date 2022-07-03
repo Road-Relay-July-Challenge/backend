@@ -182,7 +182,7 @@ def get_sorted_teams():
     teams = get_all_team_id()
     unsorted_teams = []
     for team in teams:
-        doc_ref = db.collection('Teams').document(team)
+        doc_ref = db.collection('Teams').document(str(team))
         team_ref = doc_ref.get()
         team_contributed_mileage = team_ref.to_dict()['team_contributed_mileage']
         team_true_mileage = team_ref.to_dict()['team_true_mileage']
