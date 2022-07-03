@@ -54,10 +54,10 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
     person = get_data(athlete_id)
 
     access_token_expiry = int(person.get("access_token_expired_at"))
-    name = person.get("name")
+    name = person.get("athlete_id")
     if access_token_expiry <= time():
         logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
-        obj = get_new_access_token(person.get("refresh_token"), name)
+        obj = get_new_access_token(person.get("refresh_token"), athlete_id)
         if not isinstance(obj, str):
             return return_json(
                 False, 

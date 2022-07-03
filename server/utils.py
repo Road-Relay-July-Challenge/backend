@@ -15,7 +15,7 @@ def return_json(is_success, return_message, result_object):
         result=result_object
     )
 
-def get_new_access_token(refresh_token, name):
+def get_new_access_token(refresh_token, athlete_id):
     payload = {
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
@@ -26,14 +26,14 @@ def get_new_access_token(refresh_token, name):
     response = requests.post(OAUTH_URL, data=payload, verify=False)
     if response.status_code != 200:
         return response.json()
-    logger(f"{name}'s token refreshed. New expiry: {response.json()['expires_at']}")
+    logger(f"{athlete_id}'s token refreshed. New expiry: {response.json()['expires_at']}")
 
     new_tokens = {
         "access_token": response.json()['access_token'],
         "refresh_token": response.json()['refresh_token'],
         "access_token_expired_at": int(response.json()['expires_at'])
     }
-    update_multiple_datas(name, new_tokens)
+    update_multiple_datas(athlete_id, new_tokens)
     
     return response.json()['access_token']
 
