@@ -3,7 +3,7 @@ import requests
 import urllib3
 import urllib
 from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
-from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL
+from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_weekly_mileage_from_strava
 from server.utils import return_json, logger
 from server.db import add_mileages, add_person, get_users_sorted_by_mileage, update_team_data
@@ -11,7 +11,7 @@ from server.db import add_mileages, add_person, get_users_sorted_by_mileage, upd
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
 
-@auth_api.route('/authorize', methods=['GET'])
+@auth_api.route(AUTHORIZE, methods=['GET'])
 def authorize():
     params = {
         'client_id': CLIENT_ID,

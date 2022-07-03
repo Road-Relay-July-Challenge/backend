@@ -1,4 +1,3 @@
-from urllib import response
 import requests
 from time import time
 from flask import Blueprint, request

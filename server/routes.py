@@ -1,6 +1,7 @@
 # API
 
 # auth API, starts with '/auth'
+AUTHORIZE = '/authorize'
 VERIFY = '/verify'
 REFRESH_ALL = '/refresh_all'
 
