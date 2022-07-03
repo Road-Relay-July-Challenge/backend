@@ -11,7 +11,7 @@ CLIENT_REFRESH_TOKEN = os.environ.get("CLIENT_REFRESH_TOKEN")
 
 # event time objects
 EVENT_START_TIME_OBJECT = datetime.datetime.strptime("2022-07-04 00:00:00", "%Y-%m-%d %H:%M:%S")
-EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-23 23:59:59", "%Y-%m-%d %H:%M:%S")
+EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-22 23:59:59", "%Y-%m-%d %H:%M:%S")
 START_WEEK = EVENT_START_TIME_OBJECT.isocalendar()[1]
 END_WEEK = EVENT_END_TIME_OBJECT.isocalendar()[1]
 EVENT_WEEKS = []
