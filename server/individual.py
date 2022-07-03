@@ -11,7 +11,20 @@ individual_api = Blueprint('individual_api', __name__)
 @individual_api.route(LIST_ALL_INDIVIDUAL, methods=['GET'])
 def list_all_individual():
     name_list = get_users_sorted_by_mileage()
-    return return_json(True, "Successfully retrieved all individuals.", name_list)
+    # filter to remove token fields
+    users = []
+    for user in name_list:
+        to_add = {
+            "athlete_id": user.get("athlete_id"),
+            "name": user.get("name"),
+            "team_number": user.get("team_number"),
+            "total_contributed_mileage": user.get("total_contributed_mileage"),
+            "total_true_mileage": user.get("total_true_mileage"),
+            "multiplier": user.get("multiplier")
+        }
+
+        users.append(to_add)
+    return return_json(True, "Successfully retrieved all individuals.", users)
 
 @individual_api.route(GET_HALL_OF_FAME, methods=['GET'])
 def get_hall_of_fame():

@@ -113,43 +113,13 @@ def get_data(athlete_id):
     return person
 
 def get_users_sorted_by_mileage():
-    # names = get_all_names()
-    # unsorted_names = []
-    # for name in names:
-    #     doc_ref = db.collection('Users').document(name)
-    #     person_ref = doc_ref.get()
-    #     mileage = person_ref.to_dict()['mileage']
-    #     team_number = person_ref.to_dict()['team_number']
-    #     person = {
-    #         "name" : name,
-    #         "team_number" : team_number,
-    #         "mileage" : int(mileage)
-    #     }
-    #     unsorted_names.append(person)
-    # sorted_names = sorted(unsorted_names, key=lambda d: d["mileage"], reverse = True)
-    # print(sorted_names)
-    # return sorted_names
-
-    users = db.collection('Users').stream()
-    sorted_names = sorted(users, key=lambda d: d["mileage"], reverse = True)
+    users_stream = db.collection('Users').stream()
+    users = []
+    for element in users_stream:
+        users.append(element.to_dict())
+    print(users)
+    sorted_names = sorted(users, key=lambda d: d["total_contributed_mileage"], reverse = True)
     return sorted_names
-
-# can use get_sorted_names
-# def get_all_team_number():
-#     names = get_all_names()
-#     name_list = []
-#     for name in names:
-#         doc_ref = db.collection('Users').document(name)
-#         person_ref = doc_ref.get()
-#         team_number = person_ref.to_dict()['team_number']
-#         person = {
-#             "name" : name,
-#             "team_number" : team_number,
-#         }
-#         name_list.append(person)
-#     print(name_list)
-#     return(name_list)
-            
 
 ############## TEAM FUNCTIONS ######################
 
