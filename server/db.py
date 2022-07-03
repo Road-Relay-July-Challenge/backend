@@ -65,6 +65,10 @@ def get_mileages(athlete_id):
     print(to_return)
     return to_return
 
+def get_mileage_of_week(athlete_id, week):
+    doc_ref = db.collection('Mileages').document(str(athlete_id)).collection('weeks').document(str(week))
+    return doc_ref.get().to_dict()
+
 #returns a list of all the names
 def get_all_names():
     users = db.collection('Users').stream()

@@ -3,7 +3,7 @@ from time import time
 from flask import Blueprint, request
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
-from server.db import get_data, get_mileages, get_users_sorted_by_mileage, update_data, update_mileage_data, update_multiple_datas, update_multiple_mileage_datas
+from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_mileage, update_multiple_datas, update_multiple_mileage_datas
 from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
@@ -93,19 +93,43 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
 
         week = get_week_from_date_object(sg_time_object)
         if week in weekly_mileage_dict:
-            weekly_mileage_dict[week] = weekly_mileage_dict[week] + activity.get('distance')
+            weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
         else:
-            weekly_mileage_dict[week] = activity.get('distance')
+            weekly_mileage_dict[week] = []
+            weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
 
     multiplier = person.get("multiplier")
     for week in weekly_mileage_dict:
+        athlete = get_mileage_of_week(athlete_id, week)
+        special_mileage = athlete["special_mileage"]
+        true_mileage = sum(weekly_mileage_dict[week])
+        contributed_mileage = calculate_weekly_capped_mileage(weekly_mileage_dict[week])
         to_update = {
-            "true_mileage": round(int(weekly_mileage_dict[week]) / 1000, 2),
-            "contributed_mileage": round(int(weekly_mileage_dict[week] * multiplier) / 1000, 2)
+            "true_mileage": true_mileage,
+            "contributed_mileage": round(contributed_mileage * multiplier + special_mileage, 2)
         }
         update_multiple_mileage_datas(athlete_id, week, to_update)
 
     return weekly_mileage_dict
+
+def calculate_weekly_capped_mileage(mileage_list):
+    capped_mileage = 0
+    mileage_list = sorted(mileage_list, reverse=True)
+    is_highest_factored = False
+    next_three_cap = 3
+    for mileage in mileage_list:
+        # highest uncapped run
+        if not is_highest_factored:
+            capped_mileage = capped_mileage + mileage
+        # next 3 highest runs capped at 12km
+        elif is_highest_factored and next_three_cap > 0:
+            capped_mileage = capped_mileage + (mileage if mileage <= 12 else 12)
+            next_three_cap = next_three_cap - 1
+        # all subsequent runs capped at 5km
+        else:
+            capped_mileage = capped_mileage + 4
+
+    return capped_mileage
 
 def update_individual_total_mileage_from_db(athlete_id):
     total_true_mileage = 0
@@ -114,7 +138,7 @@ def update_individual_total_mileage_from_db(athlete_id):
     mileages = get_mileages(athlete_id)
     for week in mileages: 
         total_true_mileage = total_true_mileage + week.get("true_mileage")
-        total_contributed_mileage = total_contributed_mileage + week.get("contributed_mileage") + week.get("special_mileage")
+        total_contributed_mileage = total_contributed_mileage + week.get("contributed_mileage")
     
     mileage_object = {
         "total_true_mileage": total_true_mileage,
