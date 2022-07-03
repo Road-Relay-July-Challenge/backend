@@ -3,14 +3,14 @@ from time import time
 from flask import Blueprint, request
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
-from server.db import get_data, update_data, get_sorted_names
+from server.db import get_data, update_data, get_users_sorted_by_mileage
 from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
 
 @individual_api.route(LIST_ALL_INDIVIDUAL, methods=['GET'])
 def list_all_individual():
-    name_list = get_sorted_names()
+    name_list = get_users_sorted_by_mileage()
     return return_json(True, "Successfully retrieved all individuals.", name_list)
 
 @individual_api.route(GET_HALL_OF_FAME, methods=['GET'])

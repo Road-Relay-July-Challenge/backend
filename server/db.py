@@ -29,7 +29,7 @@ def test():
 
 #take in a dictionary and adds person to database with specified fields
 def add_person(person):
-    doc_ref = db.collection('Users').document(person.get("name"))
+    doc_ref = db.collection('Users').document(str(person.get("athlete_id")))
     doc_ref.set({
         "name" : person.get("name"),
         "athlete_id" : person.get("athlete_id"),
@@ -37,7 +37,19 @@ def add_person(person):
         "access_token_expired_at" : person.get("access_token_expired_at"),
         "refresh_token" : person.get("refresh_token"),
         "team_number" : person.get("team_number"),
-        "mileage" : person.get("mileage"),
+        "total_true_mileage" : person.get("total_true_mileage"),
+        "total_contributed_mileage": person.get("total_contributed_mileage"),
+        "multiplier": 1,
+    })
+
+def add_mileages(mileages):
+    doc_ref = db.collection('Mileages').document(str(mileages.get("athlete_id")))
+    doc_ref.set({
+        "athlete_id": mileages.get("athlete_id"),
+        "week": mileages.get("week"),
+        "true_mileage": mileages.get("true_mileage"),
+        "contributed_mileage": mileages.get("contributed_mileage"),
+        "special_mileage": mileages.get("special_mileage") 
     })
 
 #returns a list of all the names
@@ -50,30 +62,25 @@ def get_all_names():
 
 #used to update any data. example to update refresh token to 12345, 
 #field_name = 'access_token' and updated_data = '12345'
-def update_data(user_name, field_name, updated_data):
-    doc_ref = db.collection('Users').document(user_name)
+def update_data(athlete_id, field_name, updated_data):
+    doc_ref = db.collection('Users').document(str(athlete_id))
     doc_ref.update({
         field_name : updated_data
     })
 
-def update_multiple_datas(user_name, updated_data_obj):
-    doc_ref = db.collection('Users').document(user_name)
+def update_multiple_datas(athlete_id, updated_data_obj):
+    doc_ref = db.collection('Users').document(str(athlete_id))
     doc_ref.update(updated_data_obj)
 
-#get name using athlete id, id input as string
-def get_name(id):
-    names = get_all_names()
-    for name in names:
-        doc_ref = db.collection('Users').document(name)
-        person_ref = doc_ref.get()
-        retrieved_id = person_ref.to_dict()['athlete_id']
-        if (id == retrieved_id):
-            print('found')
-            return person_ref.to_dict()['name']
+#get user's name using athlete id
+def get_user_name(athlete_id):
+    doc_ref = db.collection('Users').document(str(athlete_id))
+    person_ref = doc_ref.get()
+    return person_ref.to_dict()['name']
 
-#get all data using name
-def get_data(name):
-    doc_ref = db.collection('Users').document(name)
+#get all data using athlete_id
+def get_data(athlete_id):
+    doc_ref = db.collection('Users').document(str(athlete_id))
     person_ref = doc_ref.get()
     name = person_ref.to_dict()['name']
     athlete_id = person_ref.to_dict()['athlete_id']
@@ -81,7 +88,14 @@ def get_data(name):
     access_token_expired_at = person_ref.to_dict()['access_token_expired_at']
     refresh_token = person_ref.to_dict()['refresh_token']
     team_number = person_ref.to_dict()['team_number']
-    mileage = person_ref.to_dict()['mileage']
+    total_true_mileage = person_ref.to_dict()["total_true_mileage"]
+    total_contributed_mileage = person_ref.to_dict()["total_contributed_mileage"]
+    multiplier = person_ref.to_dict()["total"]
+    
+    doc_ref = db.collection('Mileages').document(str(athlete_id)).stream()
+    weekly_mileages = []
+    for row in doc_ref:
+        weekly_mileages.append(row)
 
     person = {
         "name" : name,
@@ -90,43 +104,51 @@ def get_data(name):
         "access_token_expired_at" : access_token_expired_at,
         "refresh_token" : refresh_token,
         "team_number" : team_number,
-        "mileage" : mileage
+        "total_true_mileage" : total_true_mileage,
+        "total_contributed_mileage" : total_contributed_mileage,
+        "multiplier": multiplier,
+        "weekly_mileages": weekly_mileages
     }
 
     return person
 
-def get_sorted_names():
-    names = get_all_names()
-    unsorted_names = []
-    for name in names:
-        doc_ref = db.collection('Users').document(name)
-        person_ref = doc_ref.get()
-        mileage = person_ref.to_dict()['mileage']
-        team_number = person_ref.to_dict()['team_number']
-        person = {
-            "name" : name,
-            "team_number" : team_number,
-            "mileage" : int(mileage)
-        }
-        unsorted_names.append(person)
-    sorted_names = sorted(unsorted_names, key=lambda d: d["mileage"], reverse = True)
-    print(sorted_names)
+def get_users_sorted_by_mileage():
+    # names = get_all_names()
+    # unsorted_names = []
+    # for name in names:
+    #     doc_ref = db.collection('Users').document(name)
+    #     person_ref = doc_ref.get()
+    #     mileage = person_ref.to_dict()['mileage']
+    #     team_number = person_ref.to_dict()['team_number']
+    #     person = {
+    #         "name" : name,
+    #         "team_number" : team_number,
+    #         "mileage" : int(mileage)
+    #     }
+    #     unsorted_names.append(person)
+    # sorted_names = sorted(unsorted_names, key=lambda d: d["mileage"], reverse = True)
+    # print(sorted_names)
+    # return sorted_names
+
+    users = db.collection('Users').stream()
+    sorted_names = sorted(users, key=lambda d: d["mileage"], reverse = True)
     return sorted_names
 
-def get_all_team_number():
-    names = get_all_names()
-    name_list = []
-    for name in names:
-        doc_ref = db.collection('Users').document(name)
-        person_ref = doc_ref.get()
-        team_number = person_ref.to_dict()['team_number']
-        person = {
-            "name" : name,
-            "team_number" : team_number,
-        }
-        name_list.append(person)
-    print(name_list)
-    return(name_list)
+# can use get_sorted_names
+# def get_all_team_number():
+#     names = get_all_names()
+#     name_list = []
+#     for name in names:
+#         doc_ref = db.collection('Users').document(name)
+#         person_ref = doc_ref.get()
+#         team_number = person_ref.to_dict()['team_number']
+#         person = {
+#             "name" : name,
+#             "team_number" : team_number,
+#         }
+#         name_list.append(person)
+#     print(name_list)
+#     return(name_list)
             
 
 ############## TEAM FUNCTIONS ######################
