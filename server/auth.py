@@ -15,7 +15,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables i
 def authorize():
     params = {
         'client_id': CLIENT_ID,
-        'redirect_uri': "https://rrjc-app.herokuapp.com/redirect/exchange_token",
+        'redirect_uri': "https://rrjc-web.vercel.app/redirect",
         'response_type': 'code',
         'scope': 'activity:read_all'
     }

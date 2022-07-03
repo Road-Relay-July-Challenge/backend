@@ -184,13 +184,15 @@ def get_sorted_teams():
     for team in teams:
         doc_ref = db.collection('Teams').document(team)
         team_ref = doc_ref.get()
-        mileage = team_ref.to_dict()['team_mileage']
+        team_contributed_mileage = team_ref.to_dict()['team_contributed_mileage']
+        team_true_mileage = team_ref.to_dict()['team_true_mileage']
         team_data = {
             "team_id" : team,
-            "team_mileage" : int(mileage)
+            "team_contributed_mileage" : team_contributed_mileage,
+            "team_true_mileage": team_true_mileage
         }
         unsorted_teams.append(team_data)
-    sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_mileage"], reverse = True) 
+    sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_contributed_mileage"], reverse = True) 
     return sorted_teams
 
 
