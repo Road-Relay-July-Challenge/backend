@@ -24,3 +24,14 @@ export const getUserData = async (userID, accessToken) => {
     console.log(error);
   }
 };
+
+export const authGetter = async (authTok) => {
+  try {
+    const response = await axios.get(
+      `https://www.rrjc-app.herokuapp.com/auth/verify?code=${authTok}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

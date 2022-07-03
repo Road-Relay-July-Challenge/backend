@@ -1,6 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, redirect
 import requests
 import urllib3
+import urllib
 from server.config import CLIENT_ID, CLIENT_SECRET
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL
 from server.individual import update_individual_total_mileage_from_strava
@@ -9,6 +10,19 @@ from server.db import add_person, get_all_team_number, update_team_data
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
+
+@auth_api.route('/authorize', methods=['GET'])
+def authorize():
+    params = {
+        'client_id': CLIENT_ID,
+        'redirect_uri': "https://rrjc-app.herokuapp.com/redirect/exchange_token",
+        'response_type': 'code',
+        'scope': 'activity:read_all'
+    }
+    return redirect('{}?{}'.format(
+        'https://www.strava.com/oauth/authorize',
+        urllib.parse.urlencode(params)
+    ))
 
 @auth_api.route(VERIFY, methods=['GET'])
 def verify():
