@@ -125,9 +125,9 @@ def calculate_weekly_capped_mileage(mileage_list):
         elif is_highest_factored and next_three_cap > 0:
             capped_mileage = capped_mileage + (mileage if mileage <= 12 else 12)
             next_three_cap = next_three_cap - 1
-        # all subsequent runs capped at 5km
+        # all subsequent runs capped at 4km
         else:
-            capped_mileage = capped_mileage + 4
+            capped_mileage = capped_mileage + (mileage if mileage <= 4 else 4)
 
     return capped_mileage
 
