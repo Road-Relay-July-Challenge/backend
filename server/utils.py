@@ -2,12 +2,15 @@ import requests
 import sys
 from datetime import datetime, timedelta
 from flask import jsonify
-from server.config import CLIENT_ID, CLIENT_SECRET
+from server.config import CLIENT_ID, CLIENT_SECRET, PRINT_TIME_STAMP
 from server.routes import OAUTH_URL
 from server.db import update_multiple_datas
 
 def logger(message):
-    print(f"[{datetime.now()}] {message}")
+    if PRINT_TIME_STAMP:
+        print(f"[{datetime.now()}] {message}")
+    else: 
+        print(f"{message}")
     sys.stdout.flush()
 
 def return_json(is_success, return_message, result_object):

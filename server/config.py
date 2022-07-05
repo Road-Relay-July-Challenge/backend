@@ -5,12 +5,12 @@ import datetime
 load_dotenv('.env')
 
 DEBUG = True
+PRINT_TIME_STAMP = True if os.environ.get("PRINT_TIME_STAMP") == 'True' else False
 CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
 CLIENT_REFRESH_TOKEN = os.environ.get("CLIENT_REFRESH_TOKEN")
 AUTH_REDIRECT_URL = "https://rrjc-web.vercel.app/redirect/exchange_token"
 AUTH_URL = f"https://www.strava.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={AUTH_REDIRECT_URL}&response_type=code&scope=activity:read_all"
-
 
 # event time objects
 EVENT_START_TIME_OBJECT = datetime.datetime.strptime("2022-07-04 00:00:00", "%Y-%m-%d %H:%M:%S")
