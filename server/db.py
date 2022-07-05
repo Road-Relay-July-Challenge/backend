@@ -27,6 +27,10 @@ def test():
         'Age' : 21
     })
 
+def is_person_added(athlete_id):
+    person_ref = db.collection('Users').document(str(athlete_id)).get()
+    return (person_ref is not None) or person_ref.exists
+
 #take in a dictionary and adds person to database with specified fields
 def add_person(person):
     doc_ref = db.collection('Users').document(str(person.get("athlete_id")))

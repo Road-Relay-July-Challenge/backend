@@ -6,7 +6,7 @@ from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.utils import return_json, logger
-from server.db import add_mileages, add_person, get_users_sorted_by_mileage, update_multiple_team_datas
+from server.db import add_mileages, add_person, get_users_sorted_by_mileage, is_person_added, update_multiple_team_datas
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -47,6 +47,9 @@ def verify():
         "total_contributed_mileage": 0,
         "multiplier": 1,
     }
+    if is_person_added(person["athlete_id"]):
+        return return_json(True, f"You have already been verified, {person['name']}.")
+
     add_person(person)
     logger(f"Successfully added {person['name']}")
 
