@@ -5,6 +5,7 @@ import urllib
 from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
+from server.team import update_all_team_mileage
 from server.utils import return_json, logger
 from server.db import add_mileages, add_person, get_users_sorted_by_mileage, is_person_added, update_multiple_team_datas, update_refresh_time
 
@@ -69,7 +70,6 @@ def verify():
 
 @auth_api.route(REFRESH_ALL, methods=['POST'])
 def refresh_all():
-    teamMileageDict = {}
     athletes_and_team_number = get_users_sorted_by_mileage()
 
     for athlete in athletes_and_team_number:
@@ -80,24 +80,8 @@ def refresh_all():
         obj = update_individual_total_mileage_from_db(athlete.get("athlete_id"))
         mileage = obj
         name = athlete.get("name")
-        print(f"{name}'s mileage: ", mileage, "\n\n")
-
-        team_number = athlete.get("team_number")
-
-        if team_number in teamMileageDict:
-            teamMileageDict[team_number]['team_true_mileage'] = teamMileageDict[team_number]['team_true_mileage'] + mileage.get("total_true_mileage")
-            teamMileageDict[team_number]["team_contributed_mileage"] = teamMileageDict[team_number]["team_contributed_mileage"] + mileage.get("total_contributed_mileage") 
-        else:
-            teamMileageDict[team_number] = {}
-            teamMileageDict[team_number]['team_true_mileage'] = mileage.get("total_true_mileage")
-            teamMileageDict[team_number]["team_contributed_mileage"] = mileage.get("total_contributed_mileage") 
+        logger(f"Successfully updated {name}'s mileage. {mileage}")
     
-    # for each team, if mileage of team != updated mileage, update DB
-    for team_number in teamMileageDict.keys():
-        if not isinstance(team_number, int):
-            continue
-        update_multiple_team_datas(team_number, teamMileageDict.get(team_number))
-        
-    logger("Successfully refreshed all teams' mileage")
-    return return_json(True, f"Successfully refreshed all teams' mileage", teamMileageDict)
+    update_all_team_mileage()
+    return return_json(True, f"Successfully refreshed all teams' and individuals.", None)
     

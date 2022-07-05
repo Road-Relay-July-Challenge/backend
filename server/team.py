@@ -17,7 +17,6 @@ def update_all_team_mileage():
     team_dict = {}
     for user in all_users:
         current_team_id = user.get("team_number")
-        print(current_team_id)
         if current_team_id in team_dict:
             team_dict[current_team_id]["team_true_mileage"] = team_dict[current_team_id]["team_true_mileage"] + user.get("total_true_mileage")
             team_dict[current_team_id]["team_contributed_mileage"] = team_dict[current_team_id]["team_contributed_mileage"] + user.get("total_contributed_mileage")
@@ -28,6 +27,7 @@ def update_all_team_mileage():
 
     for team in team_dict:
         update_multiple_team_datas(team, team_dict[team])
+        logger(f"Successfully updated team {team}'s mileage. {team_dict[team]}")
 
     logger("Successfully updated all teams' mileage.")
     return return_json(True, "Successfully updated all teams' mileage.", team_dict)
