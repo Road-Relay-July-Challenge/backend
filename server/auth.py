@@ -48,7 +48,7 @@ def verify():
         "multiplier": 1,
     }
     if is_person_added(person["athlete_id"]):
-        return return_json(True, f"You have already been verified, {person['name']}.")
+        return return_json(True, f"You have already been verified, {person['name']}.", None)
 
     add_person(person)
     logger(f"Successfully added {person['name']}")
