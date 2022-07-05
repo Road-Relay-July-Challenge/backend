@@ -164,6 +164,15 @@ def get_users_sorted_by_mileage():
     sorted_names = sorted(users, key=lambda d: d["total_contributed_mileage"], reverse = True)
     return sorted_names
 
+def is_side_added(athlete_id):
+    return db.collection("East_or_west").document(str(athlete_id)).get().exists
+
+def add_side(athlete_id, chosen_side):
+    doc_ref = db.collection('East_or_west').document(str(athlete_id))
+    doc_ref.set({
+        "chosen_side": chosen_side
+    })
+
 ############## TEAM FUNCTIONS ######################
 
 def add_team(team):

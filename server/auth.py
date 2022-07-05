@@ -6,7 +6,7 @@ from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.team import update_all_team_mileage
 from server.utils import return_json, logger
-from server.db import add_mileages, add_person, get_users_sorted_by_mileage, is_person_added
+from server.db import add_mileages, add_person, get_users_sorted_by_mileage, is_person_added, is_side_added, update_multiple_datas, add_side
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -77,4 +77,40 @@ def refresh_all():
     
     update_all_team_mileage()
     return return_json(True, f"Successfully refreshed all teams' and individuals.", None)
+
+@auth_api.route("/choose_east_or_west", methods=['POST'])
+def choose_east_or_west():
+    authorizationCode = request.form.get('code')
+    payload = {
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'code': authorizationCode,
+        'grant_type': 'authorization_code'
+    }
+    response = requests.post(OAUTH_URL, data=payload, verify=False)
+    if response.status_code != 200:
+        return return_json(False, f"Failed to retrieve athlete.", response.json())
+    response = response.json()
+    
+    athlete_id = response.get('athlete').get('id')
+    person = {
+        "access_token": response.get('access_token'),
+        "access_token_expired_at": response.get('expires_at'),
+        "refresh_token": response.get("refresh_token"),
+    }
+
+    if not is_person_added(athlete_id):
+        logger(f"{person['name']} not registered before.")
+        return return_json(False, f"You have never been verified. Go on to the Register page to verify once first.", None)
+
+    update_multiple_datas(athlete_id, person)
+
+    if is_side_added(athlete_id):
+        return return_json(False, f"You have already chosen your side. We don't do betrayals here.", None)
+
+    chosen_side = request.form.get("chosen_side")
+    add_side(athlete_id, chosen_side)
+
+    logger(f"Successfully added {athlete_id}'s side, {chosen_side}.")
+    return return_json(True, f"Successfully added your chosen side, the great {chosen_side.upper()}", None)
     
