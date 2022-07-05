@@ -85,9 +85,9 @@ def authorize_east_west():
     EAST_WEST_URL = f"https://www.strava.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={redirect_url}&response_type=code&scope=activity:read_all&state={chosen_side}"
     return redirect(EAST_WEST_URL)
 
-@auth_api.route("/choose_east_or_west", methods=['POST'])
+@auth_api.route("/choose_east_or_west", methods=['GET'])
 def choose_east_or_west():
-    authorizationCode = request.form.get('code')
+    authorizationCode = request.args.get('code')
     payload = {
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
