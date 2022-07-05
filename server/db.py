@@ -1,5 +1,6 @@
 from firebase_admin import credentials, firestore, initialize_app
 import server.config as config
+from time import time
 
 cred = credentials.Certificate(
     {
@@ -26,6 +27,19 @@ def test():
         'Name':'zhen hong',
         'Age' : 21
     })
+
+def get_refresh_time():
+    time_ref = db.collection('System_configs').document("last_refresh").get()
+    return time_ref
+
+def update_refresh_time():
+    doc_ref = db.collection('System_configs').document("last_refresh")
+    new_refresh_time = time()
+    doc_ref.update({
+        "last_refresh_time": new_refresh_time
+    })
+
+    return new_refresh_time
 
 def is_person_added(athlete_id):
     person_ref = db.collection('Users').document(str(athlete_id)).get()
