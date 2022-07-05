@@ -115,8 +115,8 @@ def choose_east_or_west():
     if is_side_added(athlete_id):
         return return_json(False, f"You have already chosen your side. We don't do betrayals here.", None)
 
-    if (chosen_side is not "east") and (chosen_side is not "west"):
-        return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
+    # if (chosen_side is not "east") and (chosen_side is not "west"):
+    #     return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
 
     add_side(athlete_id, chosen_side)
 
