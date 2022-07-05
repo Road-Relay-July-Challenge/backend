@@ -87,6 +87,7 @@ def authorize_east_west():
 @auth_api.route("/choose_east_or_west", methods=['GET'])
 def choose_east_or_west():
     authorizationCode = request.args.get('code')
+    chosen_side = request.args.get("chosen_side")
     payload = {
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
@@ -114,8 +115,7 @@ def choose_east_or_west():
     if is_side_added(athlete_id):
         return return_json(False, f"You have already chosen your side. We don't do betrayals here.", None)
 
-    chosen_side = request.args.get("chosen_side")
-    if (chosen_side is not "east") or (chosen_side is not "west"):
+    if (chosen_side is not "east") and (chosen_side is not "west"):
         return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
 
     add_side(athlete_id, chosen_side)
