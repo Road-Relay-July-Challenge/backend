@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect
 import requests
 import urllib3
-from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
+from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EAST_WEST_REDIRECT_URL, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.team import update_all_team_mileage
@@ -78,6 +78,13 @@ def refresh_all():
     update_all_team_mileage()
     return return_json(True, f"Successfully refreshed all teams' and individuals.", None)
 
+@auth_api.route("/authorize_east_west", methods=['GET'])
+def authorize_east_west():
+    chosen_side = request.args.get("chosen_side")
+    redirect_url = EAST_WEST_REDIRECT_URL
+    EAST_WEST_URL = f"https://www.strava.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={redirect_url}&response_type=code&scope=activity:read_all&state={chosen_side}"
+    return redirect(EAST_WEST_URL)
+
 @auth_api.route("/choose_east_or_west", methods=['POST'])
 def choose_east_or_west():
     authorizationCode = request.form.get('code')
@@ -109,6 +116,9 @@ def choose_east_or_west():
         return return_json(False, f"You have already chosen your side. We don't do betrayals here.", None)
 
     chosen_side = request.form.get("chosen_side")
+    if (chosen_side is not "east") or (chosen_side is not "west"):
+        return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
+
     add_side(athlete_id, chosen_side)
 
     logger(f"Successfully added {athlete_id}'s side, {chosen_side}.")
