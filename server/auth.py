@@ -1,26 +1,19 @@
 from flask import Blueprint, request, redirect
 import requests
 import urllib3
-import urllib
-from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
+from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.team import update_all_team_mileage
 from server.utils import return_json, logger
-from server.db import add_mileages, add_person, get_users_sorted_by_mileage, is_person_added, update_multiple_team_datas, update_refresh_time
+from server.db import add_mileages, add_person, get_users_sorted_by_mileage, is_person_added
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
 
 @auth_api.route(AUTHORIZE, methods=['GET'])
 def authorize():
-    params = {
-        'client_id': CLIENT_ID,
-        'redirect_uri': "https://rrjc-web.vercel.app/redirect",
-        'response_type': 'code',
-        'scope': 'activity:read_all'
-    }
-    return redirect("https://www.strava.com/oauth/authorize?client_id=88786&redirect_uri=https://rrjc-web.vercel.app/redirect/exchange_token&response_type=code&scope=activity:read_all")
+    return redirect(AUTH_URL)
 
 @auth_api.route(VERIFY, methods=['GET'])
 def verify():
