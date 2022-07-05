@@ -81,8 +81,7 @@ def refresh_all():
 @auth_api.route("/authorize_east_west", methods=['GET'])
 def authorize_east_west():
     chosen_side = request.args.get("chosen_side")
-    redirect_url = EAST_WEST_REDIRECT_URL
-    EAST_WEST_URL = f"https://www.strava.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={redirect_url}&response_type=code&scope=activity:read_all&state={chosen_side}"
+    EAST_WEST_URL = f"https://www.strava.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={EAST_WEST_REDIRECT_URL}&response_type=code&scope=activity:read_all&state={chosen_side}"
     return redirect(EAST_WEST_URL)
 
 @auth_api.route("/choose_east_or_west", methods=['GET'])
@@ -115,7 +114,7 @@ def choose_east_or_west():
     if is_side_added(athlete_id):
         return return_json(False, f"You have already chosen your side. We don't do betrayals here.", None)
 
-    chosen_side = request.form.get("chosen_side")
+    chosen_side = request.args.get("chosen_side")
     if (chosen_side is not "east") or (chosen_side is not "west"):
         return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
 
