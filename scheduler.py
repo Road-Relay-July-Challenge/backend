@@ -1,4 +1,6 @@
 from server.auth import refresh_all
+from app import app
 
 if __name__ == "__main__":
-    refresh_all()
+    with app.app_context():
+        refresh_all()
