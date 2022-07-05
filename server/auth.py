@@ -4,9 +4,9 @@ import urllib3
 import urllib
 from server.config import CLIENT_ID, CLIENT_SECRET, EVENT_WEEKS
 from server.routes import VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
-from server.individual import update_individual_weekly_mileage_from_strava
+from server.individual import update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.utils import return_json, logger
-from server.db import add_mileages, add_person, get_users_sorted_by_mileage, update_team_data
+from server.db import add_mileages, add_person, get_users_sorted_by_mileage, update_multiple_team_datas
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -73,20 +73,27 @@ def refresh_all():
         obj = update_individual_weekly_mileage_from_strava(athlete.get("athlete_id"))
         if not isinstance(obj, dict):
             return obj
+
+        obj = update_individual_total_mileage_from_db(athlete.get("athlete_id"))
         mileage = obj
+        name = athlete.get("name")
+        print(f"{name}'s mileage: ", mileage, "\n\n")
 
         team_number = athlete.get("team_number")
 
         if team_number in teamMileageDict:
-            teamMileageDict[team_number] = teamMileageDict[team_number] + mileage
+            teamMileageDict[team_number]['team_true_mileage'] = teamMileageDict[team_number]['team_true_mileage'] + mileage.get("total_true_mileage")
+            teamMileageDict[team_number]["team_contributed_mileage"] = teamMileageDict[team_number]["team_contributed_mileage"] + mileage.get("total_contributed_mileage") 
         else:
-            teamMileageDict[team_number] = mileage
+            teamMileageDict[team_number] = {}
+            teamMileageDict[team_number]['team_true_mileage'] = mileage.get("total_true_mileage")
+            teamMileageDict[team_number]["team_contributed_mileage"] = mileage.get("total_contributed_mileage") 
     
     # for each team, if mileage of team != updated mileage, update DB
     for team_number in teamMileageDict.keys():
         if not isinstance(team_number, int):
             continue
-        update_team_data(team_number, "mileage", teamMileageDict.get(team_number))
+        update_multiple_team_datas(team_number, teamMileageDict.get(team_number))
         
     logger("Successfully refreshed all teams' mileage")
     return return_json(True, f"Successfully refreshed all teams' mileage", teamMileageDict)

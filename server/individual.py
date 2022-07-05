@@ -99,6 +99,7 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
             weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
 
     multiplier = person.get("multiplier")
+    weekly_true_and_contributed_mileage_dict = {}
     for week in weekly_mileage_dict:
         athlete = get_mileage_of_week(athlete_id, week)
         special_mileage = athlete["special_mileage"]
@@ -108,9 +109,11 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
             "true_mileage": true_mileage,
             "contributed_mileage": round(contributed_mileage * multiplier + special_mileage, 2)
         }
+
+        weekly_true_and_contributed_mileage_dict[week] = to_update
         update_multiple_mileage_datas(athlete_id, week, to_update)
 
-    return weekly_mileage_dict
+    return weekly_true_and_contributed_mileage_dict
 
 def calculate_weekly_capped_mileage(mileage_list):
     capped_mileage = 0
