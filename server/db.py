@@ -66,7 +66,6 @@ def get_mileages(athlete_id):
     for week in weeks:
         to_return.append(week.to_dict())
 
-    print(to_return)
     return to_return
 
 def get_mileage_of_week(athlete_id, week):
@@ -126,7 +125,6 @@ def get_data(athlete_id):
     weekly_mileages = []
     doc_ref = db.collection('Mileages').document(str(athlete_id)).collection('weeks').stream()
     for week in doc_ref:
-        print(week.to_dict())
         weekly_mileages.append(week.to_dict())
 
     person = {
@@ -149,7 +147,6 @@ def get_users_sorted_by_mileage():
     users = []
     for element in users_stream:
         users.append(element.to_dict())
-    print(users)
     sorted_names = sorted(users, key=lambda d: d["total_contributed_mileage"], reverse = True)
     return sorted_names
 

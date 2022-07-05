@@ -20,6 +20,12 @@ while counter <= END_WEEK:
     EVENT_WEEKS.append(counter)
     counter = counter + 1
 
+# event rules
+MAX_MILEAGE_FOR_TIER_2_RUNS = 12
+MAX_NUMBER_OF_TIER_2_RUNS = 3
+MAX_MILEAGE_FOR_TIER_3_RUNS = 4
+SLOWEST_ALLOWABLE_PACE = float(1) / (float(8) * float(60) / float(1000))    # min/km -> m/s
+
 # db
 DB_TYPE = "service_account"
 DB_PROJECT_ID = os.environ.get("DB_PROJECT_ID")

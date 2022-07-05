@@ -2,7 +2,7 @@ import requests
 from time import time
 from flask import Blueprint, request
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
-from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT
+from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
 from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_mileage, update_multiple_datas, update_multiple_mileage_datas
 from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
@@ -91,6 +91,9 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         if activity.get('type') != 'Run':
             continue
 
+        if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
+            continue
+
         week = get_week_from_date_object(sg_time_object)
         if week in weekly_mileage_dict:
             weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
@@ -99,7 +102,6 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
             weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
 
     multiplier = person.get("multiplier")
-    weekly_true_and_contributed_mileage_dict = {}
     for week in weekly_mileage_dict:
         athlete = get_mileage_of_week(athlete_id, week)
         special_mileage = athlete["special_mileage"]
@@ -109,28 +111,28 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
             "true_mileage": true_mileage,
             "contributed_mileage": round(contributed_mileage * multiplier + special_mileage, 2)
         }
-
-        weekly_true_and_contributed_mileage_dict[week] = to_update
         update_multiple_mileage_datas(athlete_id, week, to_update)
 
-    return weekly_true_and_contributed_mileage_dict
+    return weekly_mileage_dict
 
 def calculate_weekly_capped_mileage(mileage_list):
     capped_mileage = 0
     mileage_list = sorted(mileage_list, reverse=True)
-    is_highest_factored = False
-    next_three_cap = 3
+    is_tier_1_run_factored = False
+    max_number_of_tier_2_runs = MAX_NUMBER_OF_TIER_2_RUNS
+    max_mileage_for_tier_2_runs = MAX_MILEAGE_FOR_TIER_2_RUNS
+    max_mileage_for_tier_3_runs = MAX_MILEAGE_FOR_TIER_3_RUNS 
     for mileage in mileage_list:
         # highest uncapped run
-        if not is_highest_factored:
+        if not is_tier_1_run_factored:
             capped_mileage = capped_mileage + mileage
         # next 3 highest runs capped at 12km
-        elif is_highest_factored and next_three_cap > 0:
-            capped_mileage = capped_mileage + (mileage if mileage <= 12 else 12)
-            next_three_cap = next_three_cap - 1
+        elif is_tier_1_run_factored and max_number_of_tier_2_runs > 0:
+            capped_mileage = capped_mileage + (mileage if mileage <= max_mileage_for_tier_2_runs else max_mileage_for_tier_2_runs)
+            max_number_of_tier_2_runs = max_number_of_tier_2_runs - 1
         # all subsequent runs capped at 4km
         else:
-            capped_mileage = capped_mileage + (mileage if mileage <= 4 else 4)
+            capped_mileage = capped_mileage + (mileage if mileage <= max_mileage_for_tier_3_runs else max_mileage_for_tier_3_runs)
 
     return capped_mileage
 
