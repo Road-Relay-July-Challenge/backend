@@ -1,13 +1,14 @@
 from flask import Blueprint
 from server.routes import LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE
 from server.db import get_sorted_teams, get_users_sorted_by_mileage, update_multiple_team_datas
-from server.utils import return_json
+from server.utils import return_json, logger
 
 team_api = Blueprint('team_api', __name__, url_prefix='/team')
 
 @team_api.route(LIST_ALL_TEAM, methods=['GET'])
 def list_all_team():
     team_list = get_sorted_teams()
+    logger("Successfully retrieved all teams.")
     return return_json(True, "Successfully retrieved all teams.", team_list)
 
 @team_api.route(UPDATE_ALL_TEAM_MILEAGE, methods=['POST'])
@@ -28,4 +29,5 @@ def update_all_team_mileage():
     for team in team_dict:
         update_multiple_team_datas(team, team_dict[team])
 
+    logger("Successfully updated all teams' mileage.")
     return return_json(True, "Successfully updated all teams' mileage.", team_dict)

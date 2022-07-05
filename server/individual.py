@@ -24,6 +24,8 @@ def list_all_individual():
         }
 
         users.append(to_add)
+
+    logger("Successfully retrieved all individuals.")
     return return_json(True, "Successfully retrieved all individuals.", users)
 
 @individual_api.route(GET_HALL_OF_FAME, methods=['GET'])
@@ -48,6 +50,7 @@ def update_individual_total_mileage():
         "mileage": new_mileage_object
     }
 
+    logger(f"Successfully updated {athlete_id}'s total mileage.", person_mileage_object)
     return return_json(True, f"Successfully updated {athlete_id}'s total mileage.", person_mileage_object)
 
 def update_individual_weekly_mileage_from_strava(athlete_id):

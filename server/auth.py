@@ -48,6 +48,7 @@ def verify():
         "multiplier": 1,
     }
     if is_person_added(person["athlete_id"]):
+        logger(f"{person['name']} tried to verify again.")
         return return_json(True, f"You have already been verified, {person['name']}.", None)
 
     add_person(person)
@@ -64,7 +65,6 @@ def verify():
         add_mileages(mileages)
 
     logger(f"Successfully initialized {person['name']}'s mileages.")
-    
     return return_json(True, f"Welcome to RRJC 2022, {person['name']}.", [person, mileages])
 
 @auth_api.route(REFRESH_ALL, methods=['POST'])
