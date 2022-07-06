@@ -1,7 +1,6 @@
 import requests
 from time import time
 from flask import Blueprint, request
-from sympy import total_degree
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
 from server.config import EAST_WEST_EVENT_END_TIME, EAST_WEST_EVENT_START_TIME, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
 from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas
@@ -210,4 +209,3 @@ def update_individual_east_west_mileage_from_strava(athlete_id):
     update_east_west_mileage(athlete_id, total_mileage)
 
     return total_mileage
-    
