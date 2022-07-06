@@ -137,7 +137,7 @@ def refresh_all_east_west():
     west_side_pax = 0
 
     for athlete in athletes_and_side:
-        mileage = update_individual_east_west_mileage_from_strava(athlete.get("athlete_id"))
+        mileage = update_individual_east_west_mileage_from_strava(athlete["athlete_id"])
         if not isinstance(mileage, int) and not isinstance(mileage, float):
             return return_json(False, f"Unable to get mileage of {athlete['name']}", mileage)
 
