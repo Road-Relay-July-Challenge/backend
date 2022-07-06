@@ -57,7 +57,9 @@ def add_person(person):
         "team_number" : person.get("team_number"),
         "total_true_mileage" : person.get("total_true_mileage"),
         "total_contributed_mileage": person.get("total_contributed_mileage"),
-        "multiplier": 1,
+        "multiplier": person.get("multiplier"),
+        "longest_run": person.get("longest_run"),
+        "total_time_spent": person.get("total_time_spent")
     })
 
 def add_mileages(mileages):
@@ -135,6 +137,8 @@ def get_data(athlete_id):
     total_true_mileage = person_ref.to_dict()["total_true_mileage"]
     total_contributed_mileage = person_ref.to_dict()["total_contributed_mileage"]
     multiplier = person_ref.to_dict()["multiplier"]
+    longest_run = person_ref.to_dict()['longest_run']
+    total_time_spent = person_ref.to_dict()['total_time_spent']
     
     weekly_mileages = []
     doc_ref = db.collection('Mileages').document(str(athlete_id)).collection('weeks').stream()
@@ -151,7 +155,9 @@ def get_data(athlete_id):
         "total_true_mileage" : total_true_mileage,
         "total_contributed_mileage" : total_contributed_mileage,
         "multiplier": multiplier,
-        "weekly_mileages": weekly_mileages
+        "weekly_mileages": weekly_mileages,
+        "longest_run": longest_run,
+        "total_time_spent": total_time_spent
     }
 
     return person
@@ -162,6 +168,17 @@ def get_users_sorted_by_mileage():
     for element in users_stream:
         users.append(element.to_dict())
     sorted_names = sorted(users, key=lambda d: d["total_contributed_mileage"], reverse = True)
+    return sorted_names
+
+def get_users_sorted_by_category_and_limit(category, limit):
+    users_stream = db.collection('Users').stream()
+    users = []
+    for element in users_stream:
+        users.append(element.to_dict())
+    sorted_names = sorted(users, key=lambda d: d[category], reverse = True)
+    
+    if limit is not None:
+        return sorted_names[:limit]
     return sorted_names
 
 ############## TEAM FUNCTIONS ######################

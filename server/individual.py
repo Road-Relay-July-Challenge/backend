@@ -1,9 +1,10 @@
+from curses import has_key
 import requests
 from time import time
 from flask import Blueprint, request
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
-from server.config import EAST_WEST_EVENT_END_TIME, EAST_WEST_EVENT_START_TIME, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
-from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas
+from server.config import EAST_WEST_EVENT_END_TIME, EAST_WEST_EVENT_START_TIME, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
+from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas
 from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
@@ -20,7 +21,9 @@ def list_all_individual():
             "team_number": user.get("team_number"),
             "total_contributed_mileage": user.get("total_contributed_mileage"),
             "total_true_mileage": user.get("total_true_mileage"),
-            "multiplier": user.get("multiplier")
+            "multiplier": user.get("multiplier"),
+            "longest_run": user.get("longest_run"),
+            "total_time_spent": user.get("total_time_spent"),
         }
 
         users.append(to_add)
@@ -32,7 +35,37 @@ def list_all_individual():
 def get_hall_of_fame():
     # get top 5 individuals for longest run, furthest run, highest accmulated mileage
     # each a different function from DBs
-    return
+    list_dict = {}
+
+    list_dict['highest_contributed_mileage_list'] = get_users_sorted_by_category_and_limit("total_contributed_mileage", LIMIT_PER_CATEGORY)
+    list_dict['highest_true_mileage_list'] = get_users_sorted_by_category_and_limit("total_true_mileage", LIMIT_PER_CATEGORY)
+    list_dict['longest_run_list'] = get_users_sorted_by_category_and_limit("longest_run", LIMIT_PER_CATEGORY)
+    list_dict['longest_time_spent_list'] = get_users_sorted_by_category_and_limit("total_time_spent", LIMIT_PER_CATEGORY)
+
+    # filter to remove token fields
+    for athlete_list in list_dict:
+        temp_list = []
+        for user in list_dict[athlete_list]:
+            to_add = {
+                "athlete_id": user.get("athlete_id"),
+                "name": user.get("name"),
+                "team_number": user.get("team_number"),
+                "total_contributed_mileage": user.get("total_contributed_mileage"),
+                "total_true_mileage": user.get("total_true_mileage"),
+                "multiplier": user.get("multiplier")
+            }
+
+            temp_list.append(to_add)
+        list_dict[athlete_list] = temp_list
+
+    hall_of_fame = {
+        "highest_contributed_mileage_list": list_dict['highest_contributed_mileage_list'],
+        "highest_true_mileage_list": list_dict['highest_true_mileage_list'],
+        "longest_run_list": list_dict['longest_run_list'],
+        "longest_time_spent_list": list_dict['longest_time_spent_list']
+    }
+
+    return return_json(True, f"Successfully retrieved hall of fame.", hall_of_fame)
 
 @individual_api.route(UPDATE_INDIVIDUAL_TOTAL_MILEAGE, methods=['POST'])
 def update_individual_total_mileage():
@@ -85,6 +118,8 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
     
     activityList = activityRequest.json()
     weekly_mileage_dict = {}
+    longest_run = 0
+    total_time_spent = 0
     for activity in activityList:
         greenwich_time_string = activity.get('start_date')
         sg_time_object = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ")
@@ -97,12 +132,22 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
             continue
 
+        activity_distance = round(int(activity.get('distance')) / 1000, 2)
+        longest_run = longest_run if activity_distance <= longest_run else activity_distance
+        total_time_spent = total_time_spent + activity.get('moving_time')
+
         week = get_week_from_date_object(sg_time_object)
         if week in weekly_mileage_dict:
-            weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
+            weekly_mileage_dict[week].append(activity_distance)
         else:
             weekly_mileage_dict[week] = []
-            weekly_mileage_dict[week].append(round(int(activity.get('distance')) / 1000, 2))
+            weekly_mileage_dict[week].append(activity_distance)
+
+    to_update = {
+        "total_time_spent": total_time_spent,
+        "longest_run": longest_run
+    }
+    update_multiple_datas(athlete_id, to_update)
 
     multiplier = person.get("multiplier")
     for week in weekly_mileage_dict:

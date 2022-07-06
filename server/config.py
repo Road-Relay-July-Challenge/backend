@@ -30,6 +30,9 @@ MAX_NUMBER_OF_TIER_2_RUNS = 3
 MAX_MILEAGE_FOR_TIER_3_RUNS = 4
 SLOWEST_ALLOWABLE_PACE = float(1) / (float(8) * float(60) / float(1000))    # min/km -> m/s
 
+# hall of fame
+LIMIT_PER_CATEGORY = 5
+
 # east west event
 EAST_WEST_SIGN_UP_END_TIME = 1657123199 # 6th July 2022 23:59:59 GMT +8 
 EAST_WEST_EVENT_START_TIME = 1657036800 # 6th July 2022 00:00:00 GMT +8

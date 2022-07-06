@@ -41,6 +41,8 @@ def verify():
         "total_true_mileage" : 0,
         "total_contributed_mileage": 0,
         "multiplier": 1,
+        "longest_run": 0,
+        "total_time_spent": 0
     }
     if is_person_added(person["athlete_id"]):
         logger(f"{person['name']} tried to verify again.")
@@ -77,7 +79,7 @@ def refresh_all():
         logger(f"Successfully updated {name}'s mileage. {mileage}")
     
     update_all_team_mileage()
-    return return_json(True, f"Successfully refreshed all teams' and individuals.", None)
+    return return_json(True, f"Successfully refreshed all teams and individuals.", None)
 
 @auth_api.route(AUTHORIZE_EAST_WEST, methods=['GET'])
 def authorize_east_west():
