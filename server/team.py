@@ -1,6 +1,6 @@
 from flask import Blueprint
-from server.routes import LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE
-from server.db import get_sorted_teams, get_users_sorted_by_mileage, update_multiple_team_datas
+from server.routes import GET_ALL_EAST_WEST_MILEAGE, LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE
+from server.db import get_all_east_west_users, get_sorted_teams, get_users_sorted_by_mileage, update_multiple_team_datas
 from server.utils import return_json, logger
 
 team_api = Blueprint('team_api', __name__, url_prefix='/team')
@@ -31,3 +31,30 @@ def update_all_team_mileage():
 
     logger("Successfully updated all teams' mileage.")
     return return_json(True, "Successfully updated all teams' mileage.", team_dict)
+
+@team_api.route(GET_ALL_EAST_WEST_MILEAGE, methods=['GET'])
+def get_all_east_west_mileage():
+    user_list = get_all_east_west_users()
+    east_side_pax = 0
+    east_side_mileage = 0
+    west_side_pax = 0
+    west_side_mileage = 0
+
+    for user in user_list:
+        if user.get("chosen_side") == "east":
+            east_side_pax = east_side_pax + 1
+            east_side_mileage = east_side_mileage + user.get("mileage")
+        elif user.get("chosen_side") == "west":
+            west_side_pax = west_side_pax + 1
+            west_side_mileage = west_side_mileage + user.get("mileage")
+
+    to_return = {
+        "user_list": user_list,
+        "east_side_pax": east_side_pax,
+        "east_side_mileage": east_side_mileage,
+        "west_side_pax": west_side_pax,
+        "west_side_mileage": west_side_mileage,
+    }
+
+    logger(f"Successfully retrieved all east west mileages.")
+    return return_json(True, f"Successfully retrieved all east west mileages.", to_return)

@@ -123,9 +123,9 @@ def choose_east_or_west():
     if chosen_side not in ["east", "west"]:
         return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
 
-    add_side(athlete_id, name, chosen_side)
+    add_side(athlete_id, name[0], chosen_side)
 
-    logger(f"Successfully added {name}'s side, {chosen_side}.")
+    logger(f"Successfully added {name[0]}'s side, {chosen_side}.")
     return return_json(True, f"Successfully added your chosen side, the great {chosen_side.upper()}", None)
 
 @auth_api.route(REFRESH_ALL_EAST_WEST, methods=['POST'])
