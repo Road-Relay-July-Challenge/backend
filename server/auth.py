@@ -109,15 +109,15 @@ def choose_east_or_west():
 
     if not is_person_added(athlete_id):
         logger(f"{person['name']} not registered before.")
-        return return_json(False, f"You have never been verified. Go on to the Register page to verify once first.", None)
+        return return_json(True, f"You have never been verified. Go on to the Register page to verify once first.", None)
 
     update_multiple_datas(athlete_id, person)
 
     if time() > EAST_WEST_SIGN_UP_END_TIME:
-        return return_json(False, f"It is past the registration deadline for the event.", None)
+        return return_json(True, f"It is past the registration deadline for the event.", None)
 
     if is_side_added(athlete_id):
-        return return_json(False, f"You have already chosen your side. We don't do betrayals here.", None)
+        return return_json(True, f"You have already chosen your side. We don't do betrayals here.", None)
 
     # if (chosen_side is not "east") and (chosen_side is not "west"):
     #     return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
