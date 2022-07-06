@@ -35,21 +35,27 @@ def update_all_team_mileage():
 @team_api.route(GET_ALL_EAST_WEST_MILEAGE, methods=['GET'])
 def get_all_east_west_mileage():
     user_list = get_all_east_west_users()
+
+    east_side_list = []
     east_side_pax = 0
     east_side_mileage = 0
+    west_side_list = []
     west_side_pax = 0
     west_side_mileage = 0
 
     for user in user_list:
         if user.get("chosen_side") == "east":
+            east_side_list.append(user)
             east_side_pax = east_side_pax + 1
             east_side_mileage = east_side_mileage + user.get("mileage")
         elif user.get("chosen_side") == "west":
+            west_side_list.append(user)
             west_side_pax = west_side_pax + 1
             west_side_mileage = west_side_mileage + user.get("mileage")
 
     to_return = {
-        "user_list": user_list,
+        "east_side_list": east_side_list,
+        "west_side_list": west_side_list,
         "east_side_pax": east_side_pax,
         "east_side_mileage": east_side_mileage,
         "west_side_pax": west_side_pax,
