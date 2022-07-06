@@ -30,6 +30,9 @@ MAX_NUMBER_OF_TIER_2_RUNS = 3
 MAX_MILEAGE_FOR_TIER_3_RUNS = 4
 SLOWEST_ALLOWABLE_PACE = float(1) / (float(8) * float(60) / float(1000))    # min/km -> m/s
 
+# east west event
+EAST_WEST_SIGN_UP_END_TIME = 1657094399
+
 # db
 DB_TYPE = "service_account"
 DB_PROJECT_ID = os.environ.get("DB_PROJECT_ID")
