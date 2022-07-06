@@ -101,6 +101,7 @@ def choose_east_or_west():
     response = response.json()
     
     athlete_id = response.get('athlete').get('id')
+    name = response.get('athlete').get('firstname') + " " + response.get('athlete').get('lastname'),
     person = {
         "access_token": response.get('access_token'),
         "access_token_expired_at": response.get('expires_at'),
@@ -119,12 +120,12 @@ def choose_east_or_west():
     if is_side_added(athlete_id):
         return return_json(True, f"You have already chosen your side. We don't do betrayals here.", None)
 
-    # if (chosen_side is not "east") and (chosen_side is not "west"):
-    #     return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
+    if chosen_side not in ["east", "west"]:
+        return return_json(False, f"Side not chosen. Got {chosen_side} instead.", None)
 
-    add_side(athlete_id, chosen_side)
+    add_side(athlete_id, name, chosen_side)
 
-    logger(f"Successfully added {athlete_id}'s side, {chosen_side}.")
+    logger(f"Successfully added {name}'s side, {chosen_side}.")
     return return_json(True, f"Successfully added your chosen side, the great {chosen_side.upper()}", None)
 
 @auth_api.route(REFRESH_ALL_EAST_WEST, methods=['POST'])

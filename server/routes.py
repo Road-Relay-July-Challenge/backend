@@ -11,6 +11,7 @@ REFRESH_ALL_EAST_WEST = '/refresh_all_east_west'
 # team API, starts with '/team'
 LIST_ALL_TEAM = '/list_all_team'
 UPDATE_ALL_TEAM_MILEAGE = '/update_all_team_mileage'
+GET_ALL_EAST_WEST_MILEAGE = '/get_all_east_west_mileage'
 
 # individual API, starts with '/individual'
 LIST_ALL_INDIVIDUAL = '/list_all_individual'

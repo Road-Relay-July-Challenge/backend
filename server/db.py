@@ -215,9 +215,10 @@ def get_sorted_teams():
 def is_side_added(athlete_id):
     return db.collection("East_or_west").document(str(athlete_id)).get().exists
 
-def add_side(athlete_id, chosen_side):
+def add_side(athlete_id, name, chosen_side):
     doc_ref = db.collection('East_or_west').document(str(athlete_id))
     doc_ref.set({
+        "name": name,
         "athlete_id": athlete_id,
         "chosen_side": chosen_side,
         "mileage": 0
