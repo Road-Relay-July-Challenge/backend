@@ -4,6 +4,9 @@
 AUTHORIZE = '/authorize'
 VERIFY = '/verify'
 REFRESH_ALL = '/refresh_all'
+AUTHORIZE_EAST_WEST = '/authorize_east_west'
+CHOOSE_EAST_OR_WEST = '/choose_east_or_west'
+REFRESH_ALL_EAST_WEST = '/refresh_all_east_west'
 
 # team API, starts with '/team'
 LIST_ALL_TEAM = '/list_all_team'

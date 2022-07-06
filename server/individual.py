@@ -1,9 +1,10 @@
 import requests
 from time import time
 from flask import Blueprint, request
+from sympy import total_degree
 from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
-from server.config import EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
-from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_mileage, update_multiple_datas, update_multiple_mileage_datas
+from server.config import EAST_WEST_EVENT_END_TIME, EAST_WEST_EVENT_START_TIME, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
+from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas
 from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
@@ -155,3 +156,58 @@ def update_individual_total_mileage_from_db(athlete_id):
     update_multiple_datas(athlete_id, mileage_object)
 
     return mileage_object
+
+def update_individual_east_west_mileage_from_strava(athlete_id):
+    person = get_data(athlete_id)
+
+    access_token_expiry = int(person.get("access_token_expired_at"))
+    name = person.get("athlete_id")
+    if access_token_expiry <= time():
+        logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
+        obj = get_new_access_token(person.get("refresh_token"), athlete_id)
+        if not isinstance(obj, str):
+            return return_json(
+                False, 
+                f"Failed to refresh token from Strava.",
+                obj
+            )
+        
+        access_token = obj
+    else:
+        access_token = person.get("access_token")
+
+    headers = {
+            "Authorization": "Bearer " + access_token
+    }
+    activityRequest = requests.get(ACTIVITIES_URL, headers=headers)
+    if activityRequest.status_code != 200:
+        return return_json(
+            False, 
+            f"Failed to retrieve activities from Strava.\n Error code: {activityRequest.status_code}",
+            activityRequest.json()
+        )
+    
+    activityList = activityRequest.json()
+    # weekly_mileage_dict = {}
+    total_mileage = 0
+    for activity in activityList:
+        greenwich_time_string = activity.get('start_date')
+        unix_time_stamp = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ").timestamp()
+        if unix_time_stamp < EAST_WEST_EVENT_START_TIME or unix_time_stamp > EAST_WEST_EVENT_END_TIME:
+            continue
+
+        if activity.get('type') != 'Run':
+            continue
+
+        if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
+            continue
+
+        total_mileage = total_mileage + round(int(activity.get('distance')) / 1000, 2)
+
+    multiplier = person.get("multiplier")
+    total_mileage = total_mileage * multiplier
+        
+    update_east_west_mileage(athlete_id, total_mileage)
+
+    return total_mileage
+    

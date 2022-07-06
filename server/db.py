@@ -164,15 +164,6 @@ def get_users_sorted_by_mileage():
     sorted_names = sorted(users, key=lambda d: d["total_contributed_mileage"], reverse = True)
     return sorted_names
 
-def is_side_added(athlete_id):
-    return db.collection("East_or_west").document(str(athlete_id)).get().exists
-
-def add_side(athlete_id, chosen_side):
-    doc_ref = db.collection('East_or_west').document(str(athlete_id))
-    doc_ref.set({
-        "chosen_side": chosen_side
-    })
-
 ############## TEAM FUNCTIONS ######################
 
 def add_team(team):
@@ -219,8 +210,44 @@ def get_sorted_teams():
     sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_contributed_mileage"], reverse = True) 
     return sorted_teams
 
+############## EAST WEST CHALLENGE FUNCTIONS ######################
 
+def is_side_added(athlete_id):
+    return db.collection("East_or_west").document(str(athlete_id)).get().exists
 
+def add_side(athlete_id, chosen_side):
+    doc_ref = db.collection('East_or_west').document(str(athlete_id))
+    doc_ref.set({
+        "athlete_id": athlete_id,
+        "chosen_side": chosen_side,
+        "mileage": 0
+    })
+
+def get_all_east_west_users():
+    users_stream = db.collection('East_or_west').stream()
+    users = []
+    for element in users_stream:
+        users.append(element.to_dict())
+    return users
+
+def update_east_west_mileage(athlete_id, mileage):
+    doc_ref = db.collection('East_or_west').document(str(athlete_id))
+    doc_ref.update({
+        "mileage": mileage
+    })
+
+def update_total_east_west(east_side_mileage, east_side_pax, west_side_mileage, west_side_pax):
+    doc_ref = db.collection('East_or_west').document(f"total_east")
+    doc_ref.update({
+        "mileage": east_side_mileage,
+        "pax": east_side_pax
+    })
+
+    doc_ref = db.collection('East_or_west').document(f"total_west")
+    doc_ref.update({
+        "mileage": west_side_mileage,
+        "pax": west_side_pax
+    })
 
 
 def main():
