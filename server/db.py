@@ -229,27 +229,15 @@ def get_all_east_west_users():
     users = []
     for element in users_stream:
         users.append(element.to_dict())
-    return users
+    sorted_names = sorted(users, key=lambda d: d["mileage"], reverse = True)
+
+    return sorted_names
 
 def update_east_west_mileage(athlete_id, mileage):
     doc_ref = db.collection('East_or_west').document(str(athlete_id))
     doc_ref.update({
         "mileage": mileage
     })
-
-def update_total_east_west(east_side_mileage, east_side_pax, west_side_mileage, west_side_pax):
-    doc_ref = db.collection('East_or_west').document(f"total_east")
-    doc_ref.update({
-        "mileage": east_side_mileage,
-        "pax": east_side_pax
-    })
-
-    doc_ref = db.collection('East_or_west').document(f"total_west")
-    doc_ref.update({
-        "mileage": west_side_mileage,
-        "pax": west_side_pax
-    })
-
 
 def main():
     #test()

@@ -7,7 +7,7 @@ from server.routes import AUTHORIZE_EAST_WEST, CHOOSE_EAST_OR_WEST, REFRESH_ALL_
 from server.individual import update_individual_east_west_mileage_from_strava, update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.team import update_all_team_mileage
 from server.utils import return_json, logger
-from server.db import add_mileages, add_person, get_all_east_west_users, get_users_sorted_by_mileage, is_person_added, is_side_added, update_multiple_datas, add_side, update_total_east_west
+from server.db import add_mileages, add_person, get_all_east_west_users, get_users_sorted_by_mileage, is_person_added, is_side_added, update_multiple_datas, add_side
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -138,8 +138,8 @@ def refresh_all_east_west():
 
     for athlete in athletes_and_side:
         mileage = update_individual_east_west_mileage_from_strava(athlete.get("athlete_id"))
-        if not isinstance(mileage, int):
-            return mileage
+        if not isinstance(mileage, int) and not isinstance(mileage, float):
+            return return_json(False, f"Unable to get mileage of {athlete['name']}", mileage)
 
         chosen_side = athlete.get("chosen_side")
         if chosen_side == "east":
@@ -149,8 +149,8 @@ def refresh_all_east_west():
             west_side_mileage = west_side_mileage + mileage
             west_side_pax = west_side_pax + 1
 
-        logger(f"Successfully updated {athlete['athlete_id']}'s mileage. {mileage}")
+        logger(f"Successfully updated {athlete['name']}'s mileage to {mileage} km.")
 
-    update_total_east_west
-    return return_json(True, f"Successfully refreshed all for east and west.", None)
+    logger("Successfully refreshed all for east and west.")
+    return return_json(True, "Successfully refreshed all for east and west.", None)
     
