@@ -2,7 +2,7 @@ from flask import Blueprint, request, redirect
 from time import time
 import requests
 import urllib3
-from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EAST_WEST_REDIRECT_URL, EAST_WEST_SIGN_UP_END_TIME, EVENT_WEEKS
+from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EAST_WEST_REDIRECT_URL, EAST_WEST_SIGN_UP_END_TIME_OBJECT, EVENT_WEEKS
 from server.routes import AUTHORIZE_EAST_WEST, CHOOSE_EAST_OR_WEST, REFRESH_ALL_EAST_WEST, VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
 from server.individual import update_individual_east_west_mileage_from_strava, update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
 from server.team import update_all_team_mileage
@@ -116,7 +116,7 @@ def choose_east_or_west():
 
     update_multiple_datas(athlete_id, person)
 
-    if time() > EAST_WEST_SIGN_UP_END_TIME:
+    if time() > EAST_WEST_SIGN_UP_END_TIME_OBJECT:
         return return_json(True, f"It is past the registration deadline for the event.", None)
 
     if is_side_added(athlete_id):

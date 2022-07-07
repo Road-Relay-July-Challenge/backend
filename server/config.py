@@ -34,9 +34,9 @@ SLOWEST_ALLOWABLE_PACE = float(1) / (float(8) * float(60) / float(1000))    # mi
 LIMIT_PER_CATEGORY = 5
 
 # east west event
-EAST_WEST_SIGN_UP_END_TIME = 1657123199 # 6th July 2022 23:59:59 GMT +8 
-EAST_WEST_EVENT_START_TIME = 1657036800 # 6th July 2022 00:00:00 GMT +8
-EAST_WEST_EVENT_END_TIME = 1657468799 # 10th July 2022 23:59:59 GMT +8
+EAST_WEST_SIGN_UP_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-06 23:59:59", "%Y-%m-%d %H:%M:%S") # 6th July 2022 23:59:59 GMT +8 
+EAST_WEST_EVENT_START_TIME_OBJECT = datetime.datetime.strptime("2022-07-06 00:00:00", "%Y-%m-%d %H:%M:%S") # 6th July 2022 00:00:00 GMT +8
+EAST_WEST_EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-10 23:59:59", "%Y-%m-%d %H:%M:%S") # 10th July 2022 23:59:59 GMT +8
 
 # db
 DB_TYPE = "service_account"
