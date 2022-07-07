@@ -1,4 +1,3 @@
-from curses import has_key
 import requests
 from time import time
 from flask import Blueprint, request
