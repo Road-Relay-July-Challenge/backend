@@ -4,10 +4,10 @@ import requests
 import urllib3
 from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EAST_WEST_REDIRECT_URL, EAST_WEST_SIGN_UP_END_TIME_OBJECT, EVENT_WEEKS
 from server.routes import AUTHORIZE_EAST_WEST, CHOOSE_EAST_OR_WEST, REFRESH_ALL_EAST_WEST, VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
-from server.individual import update_individual_east_west_mileage_from_strava, update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava
+from server.individual import update_individual_east_west_mileage_from_strava, update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava, update_user_rankings
 from server.team import update_all_team_mileage
 from server.utils import return_json, logger
-from server.db import add_mileages, add_person, get_all_east_west_users, get_users_sorted_by_mileage, is_person_added, is_side_added, update_multiple_datas, add_side
+from server.db import add_mileages, add_person, add_user_rank, get_all_east_west_users, get_users_sorted_by_mileage, is_person_added, is_side_added, update_multiple_datas, add_side
 
 auth_api = Blueprint('auth_api', __name__)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) # disables insecure request warning for verify
@@ -49,7 +49,10 @@ def verify():
         return return_json(True, f"You have already been verified, {person['name']}.", None)
 
     add_person(person)
-    logger(f"Successfully added {person['name']}")
+    logger(f"Successfully added {person['name']}.")
+
+    add_user_rank(person['athlete_id'])
+    logger(f"Successfully initialized {person['name']}'s ranking.")
 
     for week in EVENT_WEEKS:
         mileages = {
@@ -79,6 +82,7 @@ def refresh_all():
         logger(f"Successfully updated {name}'s mileage. {mileage}")
     
     update_all_team_mileage()
+    update_user_rankings()
     return return_json(True, f"Successfully refreshed all teams and individuals.", None)
 
 @auth_api.route(AUTHORIZE_EAST_WEST, methods=['GET'])

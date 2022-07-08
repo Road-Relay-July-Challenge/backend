@@ -1,9 +1,9 @@
 import requests
 from time import time
 from flask import Blueprint, request
-from server.routes import LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL
+from server.routes import ADD_ALL_RANKINGS, GET_USER_RANKINGS, LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL, UPDATE_USER_RANKINGS
 from server.config import EAST_WEST_EVENT_END_TIME_OBJECT, EAST_WEST_EVENT_START_TIME_OBJECT, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
-from server.db import get_data, get_mileage_of_week, get_mileages, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas
+from server.db import add_user_rank, get_data, get_mileage_of_week, get_mileages, get_user_rankings_in_db, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas, update_user_rankings_in_db
 from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
@@ -65,6 +65,32 @@ def get_hall_of_fame():
     }
 
     return return_json(True, f"Successfully retrieved hall of fame.", hall_of_fame)
+
+@individual_api.route(ADD_ALL_RANKINGS, methods=['POST'])
+def add_all_rankings():
+    current_rank = 1
+    user_list = get_users_sorted_by_mileage()
+    for user in user_list:
+        new_entry = add_user_rank(user['athlete_id'], current_rank)
+        logger(f"Successfully added {user['name']} into rankings. {new_entry}")
+        current_rank = current_rank + 1
+
+    return return_json(True, "Successfully added all rankings.", None)
+
+@individual_api.route(GET_USER_RANKINGS, methods=['GET'])
+def get_user_rankings():
+    rankings = get_user_rankings_in_db()
+
+    logger(f"Successfully retrieved all user rankings. {rankings}")
+    return return_json(True, "Successfully retrieved all user rankings.", rankings)
+
+@individual_api.route(UPDATE_USER_RANKINGS, methods=['POST'])
+def update_user_rankings():
+    user_list = get_users_sorted_by_mileage()
+    new_rankings = update_user_rankings_in_db(user_list)
+
+    logger(f"Successfully updated user rankings. {new_rankings}")
+    return return_json(True, "Successfully updated user rankings.", new_rankings)
 
 @individual_api.route(UPDATE_INDIVIDUAL_TOTAL_MILEAGE, methods=['POST'])
 def update_individual_total_mileage():

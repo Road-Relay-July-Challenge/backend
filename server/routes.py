@@ -16,6 +16,9 @@ GET_ALL_EAST_WEST_MILEAGE = '/get_all_east_west_mileage'
 # individual API, starts with '/individual'
 LIST_ALL_INDIVIDUAL = '/list_all_individual'
 GET_HALL_OF_FAME = '/get_hall_of_fame'
+ADD_ALL_RANKINGS = '/add_all_rankings'
+GET_USER_RANKINGS = '/get_user_rankings'
+UPDATE_USER_RANKINGS = '/update_user_rankings'
 UPDATE_INDIVIDUAL_TOTAL_MILEAGE = '/update_individual_total_mileage'
 
 # URL

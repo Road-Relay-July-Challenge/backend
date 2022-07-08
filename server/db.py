@@ -229,6 +229,43 @@ def get_sorted_teams():
     sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_contributed_mileage"], reverse = True) 
     return sorted_teams
 
+############## USER RANKING FUNCTIONS ######################
+
+def add_user_rank(athlete_id, ranking=None):
+    doc_ref = db.collection('User_rankings').document(str(athlete_id))
+    new_entry = {
+        "athlete_id": athlete_id,
+        "current_rank": ranking if ranking is not None else 999,
+        "last_refresh_rank": 999 
+    }
+    doc_ref.set(new_entry)
+
+    return new_entry
+
+def get_user_rankings_in_db():
+    rankings_stream = db.collection('User_rankings').stream()
+    rankings = []
+    for user in rankings_stream:
+        rankings.append(user.to_dict())
+    return rankings
+
+def update_user_rankings_in_db(user_list):
+    new_rankings = []
+    current_rank = 1
+    collection_ref = db.collection('User_rankings')
+    for user in user_list:
+        person_ref = collection_ref.document(str(user['athlete_id']))
+        new_last_refresh_rank = person_ref.get().to_dict()['current_rank']
+        person_ref.update({
+            "last_refresh_rank": new_last_refresh_rank,
+            "current_rank": current_rank
+        })
+
+        current_rank = current_rank + 1
+        new_rankings.append({"name": user['name'], "current_rank": current_rank, "last_refresh_rank": new_last_refresh_rank})
+    
+    return new_rankings
+
 ############## EAST WEST CHALLENGE FUNCTIONS ######################
 
 def is_side_added(athlete_id):
