@@ -1,6 +1,6 @@
 from flask import Blueprint
-from server.routes import GET_ALL_EAST_WEST_MILEAGE, LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE
-from server.db import get_all_east_west_users, get_sorted_teams, get_users_sorted_by_mileage, update_multiple_team_datas
+from server.routes import ADD_ALL_TEAM_RANKINGS, GET_ALL_EAST_WEST_MILEAGE, GET_TEAM_RANKINGS, LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE, UPDATE_TEAM_RANKINGS
+from server.db import add_team_rank, get_all_east_west_users, get_sorted_teams, get_team_rankings_in_db, get_users_sorted_by_mileage, update_multiple_team_datas, update_team_rankings_in_db
 from server.utils import return_json, logger
 
 team_api = Blueprint('team_api', __name__, url_prefix='/team')
@@ -64,3 +64,29 @@ def get_all_east_west_mileage():
 
     logger(f"Successfully retrieved all east west mileages.")
     return return_json(True, f"Successfully retrieved all east west mileages.", to_return)
+
+@team_api.route(ADD_ALL_TEAM_RANKINGS, methods=['POST'])
+def add_all_team_rankings():
+    current_rank = 1
+    team_list = get_sorted_teams()
+    for team in team_list:
+        new_entry = add_team_rank(team['team_id'], current_rank)
+        logger(f"Successfully added {team['team_id']} into rankings. {new_entry}")
+        current_rank = current_rank + 1
+
+    return return_json(True, "Successfully added all rankings.", None)
+
+@team_api.route(GET_TEAM_RANKINGS, methods=['GET'])
+def get_team_rankings():
+    rankings = get_team_rankings_in_db()
+
+    logger(f"Successfully retrieved all team rankings. {rankings}")
+    return return_json(True, "Successfully retrieved all team rankings.", rankings)
+
+@team_api.route(UPDATE_TEAM_RANKINGS, methods=['POST'])
+def update_team_rankings():
+    team_list = get_sorted_teams()
+    new_rankings = update_team_rankings_in_db(team_list)
+
+    logger(f"Successfully updated team rankings. {new_rankings}")
+    return return_json(True, "Successfully updated team rankings.", new_rankings)

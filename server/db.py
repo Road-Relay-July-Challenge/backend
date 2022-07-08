@@ -229,7 +229,7 @@ def get_sorted_teams():
     sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_contributed_mileage"], reverse = True) 
     return sorted_teams
 
-############## USER RANKING FUNCTIONS ######################
+############## RANKING FUNCTIONS ########################
 
 def add_user_rank(athlete_id, ranking=None):
     doc_ref = db.collection('User_rankings').document(str(athlete_id))
@@ -263,6 +263,41 @@ def update_user_rankings_in_db(user_list):
 
         current_rank = current_rank + 1
         new_rankings.append({"name": user['name'], "current_rank": current_rank, "last_refresh_rank": new_last_refresh_rank})
+    
+    return new_rankings
+
+def add_team_rank(team_id, ranking=None):
+    doc_ref = db.collection('Team_rankings').document(str(team_id))
+    new_entry = {
+        "athlete_id": team_id,
+        "current_rank": ranking if ranking is not None else 999,
+        "last_refresh_rank": 999 
+    }
+    doc_ref.set(new_entry)
+
+    return new_entry
+
+def get_team_rankings_in_db():
+    rankings_stream = db.collection('Team_rankings').stream()
+    rankings = []
+    for team in rankings_stream:
+        rankings.append(team.to_dict())
+    return rankings
+
+def update_team_rankings_in_db(team_list):
+    new_rankings = []
+    current_rank = 1
+    collection_ref = db.collection('Team_rankings')
+    for team in team_list:
+        person_ref = collection_ref.document(str(team['team_id']))
+        new_last_refresh_rank = person_ref.get().to_dict()['current_rank']
+        person_ref.update({
+            "last_refresh_rank": new_last_refresh_rank,
+            "current_rank": current_rank
+        })
+
+        current_rank = current_rank + 1
+        new_rankings.append({"name": team['team_id'], "current_rank": current_rank, "last_refresh_rank": new_last_refresh_rank})
     
     return new_rankings
 
