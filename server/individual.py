@@ -199,6 +199,7 @@ def calculate_weekly_capped_mileage(mileage_list):
         # highest uncapped run
         if not is_tier_1_run_factored:
             capped_mileage = capped_mileage + mileage
+            is_tier_1_run_factored = True
         # next 3 highest runs capped at 12km
         elif is_tier_1_run_factored and max_number_of_tier_2_runs > 0:
             capped_mileage = capped_mileage + (mileage if mileage <= max_mileage_for_tier_2_runs else max_mileage_for_tier_2_runs)
