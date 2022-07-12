@@ -29,7 +29,7 @@ while counter <= END_WEEK:
 MAX_MILEAGE_FOR_TIER_2_RUNS = 12 * 1000
 MAX_NUMBER_OF_TIER_2_RUNS = 3 * 1000
 MAX_MILEAGE_FOR_TIER_3_RUNS = 4 * 1000
-SLOWEST_ALLOWABLE_PACE = float(1) / (float(8) * float(60) / float(1000))    # min/km -> m/s
+SLOWEST_ALLOWABLE_PACE = float(1) / (float(9) * float(60) / float(1000))    # min/km -> m/s
 
 # hall of fame
 LIMIT_PER_CATEGORY = 5
