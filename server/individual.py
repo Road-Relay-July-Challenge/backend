@@ -12,16 +12,17 @@ individual_api = Blueprint('individual_api', __name__)
 def list_all_individual():
     name_list = get_users_sorted_by_mileage()
     # filter to remove token fields
+    # convert to km
     users = []
     for user in name_list:
         to_add = {
             "athlete_id": user.get("athlete_id"),
             "name": user.get("name"),
             "team_number": user.get("team_number"),
-            "total_contributed_mileage": user.get("total_contributed_mileage"),
-            "total_true_mileage": user.get("total_true_mileage"),
+            "total_contributed_mileage": user.get("total_contributed_mileage") / 1000,
+            "total_true_mileage": user.get("total_true_mileage") / 1000,
             "multiplier": user.get("multiplier"),
-            "longest_run": user.get("longest_run"),
+            "longest_run": user.get("longest_run") / 1000,
             "total_time_spent": user.get("total_time_spent"),
         }
 
@@ -157,7 +158,7 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
             continue
 
-        activity_distance = round(int(activity.get('distance')) / 1000, 2)
+        activity_distance = activity.get('distance')
         longest_run = longest_run if activity_distance <= longest_run else activity_distance
         total_time_spent = total_time_spent + activity.get('moving_time')
 
@@ -182,7 +183,7 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         contributed_mileage = calculate_weekly_capped_mileage(weekly_mileage_dict[week])
         to_update = {
             "true_mileage": true_mileage,
-            "contributed_mileage": round(contributed_mileage * multiplier + special_mileage, 2)
+            "contributed_mileage": contributed_mileage * multiplier + special_mileage
         }
         update_multiple_mileage_datas(athlete_id, week, to_update)
 
@@ -272,7 +273,7 @@ def update_individual_east_west_mileage_from_strava(athlete_id):
         if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
             continue
 
-        total_mileage = total_mileage + round(int(activity.get('distance')) / 1000, 2)
+        total_mileage = total_mileage + activity.get('distance')
 
     multiplier = person.get("multiplier")
     total_mileage = total_mileage * multiplier

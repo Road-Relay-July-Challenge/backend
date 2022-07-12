@@ -8,6 +8,9 @@ team_api = Blueprint('team_api', __name__, url_prefix='/team')
 @team_api.route(LIST_ALL_TEAM, methods=['GET'])
 def list_all_team():
     team_list = get_sorted_teams()
+    for team in team_list:
+        team['team_true_mileage'] = team['team_true_mileage'] / 1000
+        team['team_contributed_mileage'] = team['team_contributed_mileage'] / 1000
     logger("Successfully retrieved all teams.")
     return return_json(True, "Successfully retrieved all teams.", team_list)
 
