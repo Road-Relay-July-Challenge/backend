@@ -1,12 +1,34 @@
 import requests
 from time import time
 from flask import Blueprint, request
-from server.routes import ADD_ALL_USER_RANKINGS, GET_USER_RANKINGS, LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL, UPDATE_USER_RANKINGS
-from server.config import EAST_WEST_EVENT_END_TIME_OBJECT, EAST_WEST_EVENT_START_TIME_OBJECT, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
+from server.routes import ADD_ALL_USER_RANKINGS, GET_USER_RANKINGS, LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, OAUTH_URL, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL, UPDATE_USER_RANKINGS
+from server.config import CLIENT_ID, CLIENT_SECRET, EAST_WEST_EVENT_END_TIME_OBJECT, EAST_WEST_EVENT_START_TIME_OBJECT, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
 from server.db import add_user_rank, get_data, get_mileage_of_week, get_mileages, get_user_rankings_in_db, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_east_west_mileage, update_multiple_datas, update_multiple_mileage_datas, update_user_rankings_in_db
-from server.utils import get_new_access_token, convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
+from server.utils import convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
+
+def get_new_access_token(refresh_token, athlete_id):
+    payload = {
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'refresh_token': refresh_token,
+        'grant_type': 'refresh_token'
+    }
+
+    response = requests.post(OAUTH_URL, data=payload, verify=False)
+    if response.status_code != 200:
+        return response.json()
+    logger(f"{athlete_id}'s token refreshed. New expiry: {response.json()['expires_at']}")
+
+    new_tokens = {
+        "access_token": response.json()['access_token'],
+        "refresh_token": response.json()['refresh_token'],
+        "access_token_expired_at": int(response.json()['expires_at'])
+    }
+    update_multiple_datas(athlete_id, new_tokens)
+    
+    return response.json()['access_token']
 
 @individual_api.route(LIST_ALL_INDIVIDUAL, methods=['GET'])
 def list_all_individual():
@@ -46,7 +68,7 @@ def get_hall_of_fame():
         "Highest Contributed Mileage (km)": list_dict['highest_contributed_mileage_list'],
         "Highest True Mileage (km)": list_dict['highest_true_mileage_list'],
         "Longest Run (km)": list_dict['longest_run_list'],
-        "Longest Time Spent (seconds)": list_dict['longest_time_spent_list']
+        "Longest Time Spent (hours:minutes:seconds)": list_dict['longest_time_spent_list']
     }
 
     return return_json(True, f"Successfully retrieved hall of fame.", hall_of_fame)

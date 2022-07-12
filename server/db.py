@@ -2,6 +2,8 @@ from firebase_admin import credentials, firestore, initialize_app
 import server.config as config
 from time import time
 
+from server.utils import convert_seconds_to_hours_minutes_seconds_string
+
 cred = credentials.Certificate(
     {
         "type": config.DB_TYPE,
@@ -172,6 +174,7 @@ def get_users_sorted_by_mileage():
 
 def get_users_sorted_by_category_and_limit(category, limit):
     categories_with_mileage = ["longest_run", "total_contributed_mileage", "total_true_mileage"]
+    categories_with_time = ["total_time_spent"]
 
     users_stream = db.collection('Users').stream()
     users = []
@@ -180,11 +183,16 @@ def get_users_sorted_by_category_and_limit(category, limit):
         name = element.to_dict()['name']
         team_number = element.to_dict()['team_number']
         data = element.to_dict()[category]
+        if category in categories_with_mileage:
+            data = round( (data / 1000), 2 )
+        if category in categories_with_time:
+            data = convert_seconds_to_hours_minutes_seconds_string(data)
+
         to_append = {
             "athlete_id": athlete_id,
             "name": name,
             "team_number": team_number,
-            "data": (data / 1000) if (category in categories_with_mileage) else data
+            "data": data
         }
 
         users.append(to_append)

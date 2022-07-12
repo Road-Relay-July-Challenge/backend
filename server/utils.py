@@ -1,10 +1,7 @@
-import requests
 import sys
 from datetime import datetime, timedelta
 from flask import jsonify
-from server.config import CLIENT_ID, CLIENT_SECRET, PRINT_TIME_STAMP
-from server.routes import OAUTH_URL
-from server.db import update_multiple_datas
+from server.config import PRINT_TIME_STAMP
 
 def logger(message):
     if PRINT_TIME_STAMP:
@@ -20,28 +17,6 @@ def return_json(is_success, return_message, result_object):
         result=result_object
     )
 
-def get_new_access_token(refresh_token, athlete_id):
-    payload = {
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-        'refresh_token': refresh_token,
-        'grant_type': 'refresh_token'
-    }
-
-    response = requests.post(OAUTH_URL, data=payload, verify=False)
-    if response.status_code != 200:
-        return response.json()
-    logger(f"{athlete_id}'s token refreshed. New expiry: {response.json()['expires_at']}")
-
-    new_tokens = {
-        "access_token": response.json()['access_token'],
-        "refresh_token": response.json()['refresh_token'],
-        "access_token_expired_at": int(response.json()['expires_at'])
-    }
-    update_multiple_datas(athlete_id, new_tokens)
-    
-    return response.json()['access_token']
-
 def convert_from_greenwich_to_singapore_time(timestring, format):
     greenwich_time = datetime.strptime(timestring, format)
     sg_time_object = greenwich_time + timedelta(hours=8)
@@ -50,3 +25,6 @@ def convert_from_greenwich_to_singapore_time(timestring, format):
 
 def get_week_from_date_object(date_object):
     return date_object.isocalendar()[1]
+
+def convert_seconds_to_hours_minutes_seconds_string(n_seconds):
+    return str(timedelta(seconds = n_seconds))
