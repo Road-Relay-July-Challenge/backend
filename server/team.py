@@ -60,9 +60,9 @@ def get_all_east_west_mileage():
         "east_side_list": east_side_list,
         "west_side_list": west_side_list,
         "east_side_pax": east_side_pax,
-        "east_side_mileage": east_side_mileage,
+        "east_side_mileage": east_side_mileage / 1000,
         "west_side_pax": west_side_pax,
-        "west_side_mileage": west_side_mileage,
+        "west_side_mileage": west_side_mileage / 1000,
     }
 
     logger(f"Successfully retrieved all east west mileages.")
