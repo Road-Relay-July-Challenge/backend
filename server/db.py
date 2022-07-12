@@ -1,5 +1,4 @@
 from firebase_admin import credentials, firestore, initialize_app
-from sqlalchemy import all_
 import server.config as config
 from time import time
 
