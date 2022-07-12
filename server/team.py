@@ -63,7 +63,7 @@ def get_all_east_west_mileage():
         user['awarded_mileage'] = user['mileage'] / east_side_mileage * (WINNING_MILEAGE if WINNING_SIDE == "EAST" else LOSING_MILEAGE)
 
     for user in west_side_list:
-        user['awarded_mileage'] = user['mileage'] / east_side_mileage * (WINNING_MILEAGE if WINNING_SIDE == "EAST" else LOSING_MILEAGE)
+        user['awarded_mileage'] = user['mileage'] / east_side_mileage * (WINNING_MILEAGE if WINNING_SIDE == "WEST" else LOSING_MILEAGE)
 
 
     to_return = {
