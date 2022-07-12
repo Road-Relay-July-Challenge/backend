@@ -1,4 +1,5 @@
 from firebase_admin import credentials, firestore, initialize_app
+from sqlalchemy import all_
 import server.config as config
 from time import time
 
@@ -97,6 +98,13 @@ def get_all_names():
     for user in users:
         names.append(user.to_dict()['name'])
     return names
+
+def get_all_users():
+    users = db.collection('Users').stream()
+    all_users = []
+    for user in users:
+        all_users.append(user.to_dict())
+    return all_users
 
 #used to update any data. example to update refresh token to 12345, 
 #field_name = 'access_token' and updated_data = '12345'
@@ -250,6 +258,11 @@ def get_sorted_teams():
         unsorted_teams.append(team_data)
     sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_contributed_mileage"], reverse = True) 
     return sorted_teams
+
+############## ADMIN FUNCTIONS ######################
+def add_user_into_achievement(user_object):
+    doc_ref = db.collection('Achievements').document(str(user_object['athlete_id']))
+    doc_ref.set(user_object)
 
 ############## RANKING FUNCTIONS ########################
 
