@@ -1,4 +1,5 @@
 from flask import Blueprint
+from server.config import LOSING_MILEAGE, WINNING_MILEAGE, WINNING_SIDE
 from server.routes import ADD_ALL_TEAM_RANKINGS, GET_ALL_EAST_WEST_MILEAGE, GET_TEAM_RANKINGS, LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE, UPDATE_TEAM_RANKINGS
 from server.db import add_team_rank, get_all_east_west_users, get_sorted_teams, get_team_rankings_in_db, get_users_sorted_by_mileage, update_multiple_team_datas, update_team_rankings_in_db
 from server.utils import return_json, logger
@@ -57,13 +58,21 @@ def get_all_east_west_mileage():
             west_side_pax = west_side_pax + 1
             west_side_mileage = west_side_mileage + user.get("mileage")
 
+    # add awarded mileage
+    for user in east_side_list:
+        user['awarded_mileage'] = user['mileage'] / east_side_mileage * (WINNING_MILEAGE if WINNING_SIDE == "EAST" else LOSING_MILEAGE)
+
+    for user in west_side_list:
+        user['awarded_mileage'] = user['mileage'] / east_side_mileage * (WINNING_MILEAGE if WINNING_SIDE == "EAST" else LOSING_MILEAGE)
+
+
     to_return = {
         "east_side_list": east_side_list,
         "west_side_list": west_side_list,
         "east_side_pax": east_side_pax,
-        "east_side_mileage": east_side_mileage / 1000,
+        "east_side_mileage": east_side_mileage,
         "west_side_pax": west_side_pax,
-        "west_side_mileage": west_side_mileage / 1000,
+        "west_side_mileage": west_side_mileage,
     }
 
     logger(f"Successfully retrieved all east west mileages.")
