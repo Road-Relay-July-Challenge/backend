@@ -68,7 +68,7 @@ def get_hall_of_fame():
         "Highest Contributed Mileage (km)": list_dict['highest_contributed_mileage_list'],
         "Highest True Mileage (km)": list_dict['highest_true_mileage_list'],
         "Longest Run (km)": list_dict['longest_run_list'],
-        "Longest Time Spent (hours:minutes:seconds)": list_dict['longest_time_spent_list']
+        "Longest Time Spent (hh:mm:ss)": list_dict['longest_time_spent_list']
     }
 
     return return_json(True, f"Successfully retrieved hall of fame.", hall_of_fame)
