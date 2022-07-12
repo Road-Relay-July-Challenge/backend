@@ -171,11 +171,25 @@ def get_users_sorted_by_mileage():
     return sorted_names
 
 def get_users_sorted_by_category_and_limit(category, limit):
+    categories_with_mileage = ["longest_run", "total_contributed_mileage", "total_true_mileage"]
+
     users_stream = db.collection('Users').stream()
     users = []
     for element in users_stream:
-        users.append(element.to_dict())
-    sorted_names = sorted(users, key=lambda d: d[category], reverse = True)
+        athlete_id = element.to_dict()['athlete_id']
+        name = element.to_dict()['name']
+        team_number = element.to_dict()['team_number']
+        data = element.to_dict()[category]
+        to_append = {
+            "athlete_id": athlete_id,
+            "name": name,
+            "team_number": team_number,
+            "data": (data / 1000) if (category in categories_with_mileage) else data
+        }
+
+        users.append(to_append)
+
+    sorted_names = sorted(users, key=lambda d: d["data"], reverse = True)
     
     if limit is not None:
         return sorted_names[:limit]

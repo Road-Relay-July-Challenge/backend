@@ -42,27 +42,11 @@ def get_hall_of_fame():
     list_dict['longest_run_list'] = get_users_sorted_by_category_and_limit("longest_run", LIMIT_PER_CATEGORY)
     list_dict['longest_time_spent_list'] = get_users_sorted_by_category_and_limit("total_time_spent", LIMIT_PER_CATEGORY)
 
-    # filter to remove token fields
-    for athlete_list in list_dict:
-        temp_list = []
-        for user in list_dict[athlete_list]:
-            to_add = {
-                "athlete_id": user.get("athlete_id"),
-                "name": user.get("name"),
-                "team_number": user.get("team_number"),
-                "total_contributed_mileage": user.get("total_contributed_mileage"),
-                "total_true_mileage": user.get("total_true_mileage"),
-                "multiplier": user.get("multiplier")
-            }
-
-            temp_list.append(to_add)
-        list_dict[athlete_list] = temp_list
-
     hall_of_fame = {
-        "Highest Contributed Mileage": list_dict['highest_contributed_mileage_list'],
-        "Highest True Mileage": list_dict['highest_true_mileage_list'],
-        "Longest Run": list_dict['longest_run_list'],
-        "Longest Time Spent": list_dict['longest_time_spent_list']
+        "Highest Contributed Mileage (km)": list_dict['highest_contributed_mileage_list'],
+        "Highest True Mileage (km)": list_dict['highest_true_mileage_list'],
+        "Longest Run (km)": list_dict['longest_run_list'],
+        "Longest Time Spent (seconds)": list_dict['longest_time_spent_list']
     }
 
     return return_json(True, f"Successfully retrieved hall of fame.", hall_of_fame)
