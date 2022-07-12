@@ -24,6 +24,7 @@ GET_USER_RANKINGS = '/get_user_rankings'
 UPDATE_USER_RANKINGS = '/update_user_rankings'
 UPDATE_INDIVIDUAL_TOTAL_MILEAGE = '/update_individual_total_mileage'
 ADD_INDIVIDUAL_WEEKLY_SPECIAL_MILEAGE = '/add_individual_weekly_special_mileage'
+UPDATE_ALL_ACHIEVEMENT_COUNT = '/update_all_achievement_count'
 
 # admin API, starts with '/admin'
 ADD_ALL_USERS_INTO_ACHIEVEMENTS_COLLECTION = '/add_all_users_into_achievements_collection'

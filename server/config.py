@@ -42,6 +42,10 @@ WINNING_SIDE = "EAST"
 WINNING_MILEAGE = 50 # km
 LOSING_MILEAGE = 30 # km
 
+# achievement event
+ACHIEVEMENT_EVENT_START_TIME_OBJECT = datetime.datetime.strptime("2022-07-13 00:00:00", "%Y-%m-%d %H:%M:%S") # 13th July 2022 00:00:00 GMT +8
+ACHIEVEMENT_EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-17 23:59:59", "%Y-%m-%d %H:%M:%S") # 17th July 2022 23:59:59 GMT +8
+
 # db
 DB_TYPE = "service_account"
 DB_PROJECT_ID = os.environ.get("DB_PROJECT_ID")

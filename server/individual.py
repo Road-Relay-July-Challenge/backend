@@ -1,9 +1,9 @@
 import requests
 from time import time
 from flask import Blueprint, request
-from server.routes import ADD_ALL_USER_RANKINGS, GET_USER_RANKINGS, LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, OAUTH_URL, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL, ADD_INDIVIDUAL_WEEKLY_SPECIAL_MILEAGE, UPDATE_USER_RANKINGS
-from server.config import CLIENT_ID, CLIENT_SECRET, EAST_WEST_EVENT_END_TIME_OBJECT, EAST_WEST_EVENT_START_TIME_OBJECT, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
-from server.db import add_user_rank, get_data, get_mileage_of_week, get_mileages, get_user_rankings_in_db, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_east_west_mileage, update_mileage_data, update_multiple_datas, update_multiple_mileage_datas, update_user_rankings_in_db
+from server.routes import ADD_ALL_USER_RANKINGS, GET_USER_RANKINGS, LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, OAUTH_URL, UPDATE_ALL_ACHIEVEMENT_COUNT, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL, ADD_INDIVIDUAL_WEEKLY_SPECIAL_MILEAGE, UPDATE_USER_RANKINGS
+from server.config import ACHIEVEMENT_EVENT_END_TIME_OBJECT, ACHIEVEMENT_EVENT_START_TIME_OBJECT, CLIENT_ID, CLIENT_SECRET, EAST_WEST_EVENT_END_TIME_OBJECT, EAST_WEST_EVENT_START_TIME_OBJECT, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
+from server.db import add_user_rank, get_all_users, get_data, get_mileage_of_week, get_mileages, get_user_rankings_in_db, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_achievement_data, update_east_west_mileage, update_mileage_data, update_multiple_datas, update_multiple_mileage_datas, update_user_rankings_in_db
 from server.utils import convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
@@ -303,3 +303,59 @@ def add_individual_weekly_special_mileage():
     update_mileage_data(athlete_id, week, "special_mileage", new_special_mileage)
 
     return return_json(True, f"Successfully updated special mileage for {athlete_id} to {new_special_mileage / 1000} km.", None)
+
+@individual_api.route(UPDATE_ALL_ACHIEVEMENT_COUNT, methods=['POST'])
+def update_all_achievement_count():
+    all_users = get_all_users
+    for person in all_users:
+        access_token_expiry = int(person.get("access_token_expired_at"))
+        name = person.get("athlete_id")
+        if access_token_expiry <= time():
+            logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
+            obj = get_new_access_token(person.get("refresh_token"), person['athlete_id'])
+            if not isinstance(obj, str):
+                return return_json(
+                    False, 
+                    f"Failed to refresh token from Strava.",
+                    obj
+                )
+            
+            access_token = obj
+        else:
+            access_token = person.get("access_token")
+
+        headers = {
+                "Authorization": "Bearer " + access_token
+        }
+        activityRequest = requests.get(ACTIVITIES_URL, headers=headers)
+        if activityRequest.status_code != 200:
+            return return_json(
+                False, 
+                f"Failed to retrieve activities from Strava.\n Error code: {activityRequest.status_code}",
+                activityRequest.json()
+            )
+        
+        activityList = activityRequest.json()
+        achievement_count = 0
+        for activity in activityList:
+            greenwich_time_string = activity.get('start_date')
+            sg_time_object = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ")
+            if sg_time_object < ACHIEVEMENT_EVENT_START_TIME_OBJECT or sg_time_object > ACHIEVEMENT_EVENT_END_TIME_OBJECT:
+                continue
+
+            if activity.get('type') != 'Run':
+                continue
+
+            if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
+                continue
+
+            if activity.get('achievement_count') < 1:
+                continue
+
+            achievement_count = achievement_count + activity.get('achievement_count')
+
+        update_achievement_data(person['athlete_id'], 'achievement_count', achievement_count)
+        logger(f"Successfully updated {person['name']}'s achievement count to {achievement_count}")
+
+    logger("Successfully updated all person's achievement count")
+    return return_json(True, "Successfully updated all person's achievement count.", None)
