@@ -47,6 +47,7 @@ def get_all_east_west_mileage():
     west_side_mileage = 0
 
     for user in user_list:
+        user['mileage'] = user['mileage'] / 1000
         if user.get("chosen_side") == "east":
             east_side_list.append(user)
             east_side_pax = east_side_pax + 1
