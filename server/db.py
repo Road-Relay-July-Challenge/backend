@@ -213,7 +213,7 @@ def get_users_sorted_by_category_and_limit(category, limit):
 def update_achievement_data(athlete_id, field_name, updated_data):
     doc_ref = db.collection('Achievements').document(str(athlete_id))
     doc_ref.update({
-        field_name: update_data
+        field_name: updated_data
     })
 
 ############## TEAM FUNCTIONS ######################

@@ -306,7 +306,7 @@ def add_individual_weekly_special_mileage():
 
 @individual_api.route(UPDATE_ALL_ACHIEVEMENT_COUNT, methods=['POST'])
 def update_all_achievement_count():
-    all_users = get_all_users
+    all_users = get_all_users()
     for person in all_users:
         access_token_expiry = int(person.get("access_token_expired_at"))
         name = person.get("athlete_id")
@@ -349,13 +349,10 @@ def update_all_achievement_count():
             if activity.get('average_speed') < SLOWEST_ALLOWABLE_PACE:
                 continue
 
-            if activity.get('achievement_count') < 1:
-                continue
-
             achievement_count = achievement_count + activity.get('achievement_count')
 
         update_achievement_data(person['athlete_id'], 'achievement_count', achievement_count)
-        logger(f"Successfully updated {person['name']}'s achievement count to {achievement_count}")
+        logger(f"Successfully updated {person['name']}'s achievement count to {achievement_count}.")
 
     logger("Successfully updated all person's achievement count")
     return return_json(True, "Successfully updated all person's achievement count.", None)
