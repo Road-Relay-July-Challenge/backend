@@ -216,6 +216,14 @@ def update_achievement_data(athlete_id, field_name, updated_data):
         field_name: updated_data
     })
 
+def get_all_achievements():
+    doc_stream = db.collection('Achievements').stream()
+    users = []
+    for user in doc_stream:
+        users.append(user.to_dict())
+    
+    return users
+
 ############## TEAM FUNCTIONS ######################
 
 def add_team(team):

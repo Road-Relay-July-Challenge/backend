@@ -15,6 +15,7 @@ GET_ALL_EAST_WEST_MILEAGE = '/get_all_east_west_mileage'
 ADD_ALL_TEAM_RANKINGS = '/add_all_team_rankings'
 GET_TEAM_RANKINGS = '/get_team_rankings'
 UPDATE_TEAM_RANKINGS = '/update_team_rankings'
+LIST_ALL_TEAM_ACHIEVEMENT_COUNT = '/list_all_team_achievement_count'
 
 # individual API, starts with '/individual'
 LIST_ALL_INDIVIDUAL = '/list_all_individual'

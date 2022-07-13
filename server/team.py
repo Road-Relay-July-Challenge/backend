@@ -1,7 +1,7 @@
 from flask import Blueprint
 from server.config import LOSING_MILEAGE, WINNING_MILEAGE, WINNING_SIDE
-from server.routes import ADD_ALL_TEAM_RANKINGS, GET_ALL_EAST_WEST_MILEAGE, GET_TEAM_RANKINGS, LIST_ALL_TEAM, UPDATE_ALL_TEAM_MILEAGE, UPDATE_TEAM_RANKINGS
-from server.db import add_team_rank, get_all_east_west_users, get_sorted_teams, get_team_rankings_in_db, get_users_sorted_by_mileage, update_multiple_team_datas, update_team_rankings_in_db
+from server.routes import ADD_ALL_TEAM_RANKINGS, GET_ALL_EAST_WEST_MILEAGE, GET_TEAM_RANKINGS, LIST_ALL_TEAM, LIST_ALL_TEAM_ACHIEVEMENT_COUNT, UPDATE_ALL_TEAM_MILEAGE, UPDATE_TEAM_RANKINGS
+from server.db import add_team_rank, get_all_achievements, get_all_east_west_users, get_sorted_teams, get_team_rankings_in_db, get_users_sorted_by_mileage, update_multiple_team_datas, update_team_rankings_in_db
 from server.utils import return_json, logger
 
 team_api = Blueprint('team_api', __name__, url_prefix='/team')
@@ -103,3 +103,27 @@ def update_team_rankings():
 
     logger(f"Successfully updated team rankings. {new_rankings}")
     return return_json(True, "Successfully updated team rankings.", new_rankings)
+
+@team_api.route(LIST_ALL_TEAM_ACHIEVEMENT_COUNT, methods=['GET'])
+def list_all_team_achievement_count():
+    user_list = get_all_achievements()
+    team_dict = {}
+    team_name_dict = {}
+    for user in user_list:
+        if user['team_id'] not in team_dict:
+            team_dict[user['team_id']] = []
+            team_name_dict[user['team_id']] = user['team_name']
+
+        team_dict[user['team_id']].append( { user['name'] : user['achievement_count'] } )
+
+    all_team_achievement_count = []
+    for team in team_dict:
+        return_obj = {
+            "team_number": team,
+            "team_name": team_name_dict[team],
+            "achievement_count_array": team_dict[team]
+        }
+        all_team_achievement_count.append(return_obj)
+
+    logger("Successfully retrieved all teams' achievement count.")
+    return return_json(True, "Successfully retrieved all teams' achievement count.", all_team_achievement_count)
