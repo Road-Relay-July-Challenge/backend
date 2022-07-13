@@ -264,6 +264,25 @@ def get_sorted_teams():
     sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_contributed_mileage"], reverse = True) 
     return sorted_teams
 
+def get_sorted_teams_by_id():
+    teams = get_all_team_id()
+    unsorted_teams = []
+    for team in teams:
+        doc_ref = db.collection('Teams').document(str(team))
+        team_ref = doc_ref.get()
+        team_name = team_ref.to_dict()['team_name']
+        team_contributed_mileage = team_ref.to_dict()['team_contributed_mileage']
+        team_true_mileage = team_ref.to_dict()['team_true_mileage']
+        team_data = {
+            "team_id" : team,
+            "team_name": team_name,
+            "team_contributed_mileage": team_contributed_mileage,
+            "team_true_mileage": team_true_mileage
+        }
+        unsorted_teams.append(team_data)
+    sorted_teams = sorted(unsorted_teams, key=lambda d: d["team_id"]) 
+    return sorted_teams
+
 ############## ADMIN FUNCTIONS ######################
 def add_user_into_achievement(user_object):
     doc_ref = db.collection('Achievements').document(str(user_object['athlete_id']))
