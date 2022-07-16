@@ -117,14 +117,14 @@ def list_all_team_achievement_count():
             team_name_dict[user['team_id']] = user['team_name']
             team_mileage_dict[user['team_id']] = []
             is_all_achieved_dict[user['team_id']] = {
-                "number_achieved": 0,
-                "team_strength": 0
+                'number_achieved': 0,
+                'team_strength': 0
             }
 
         team_dict[user['team_id']].append( { user['name']: user['achievement_count'] } )
         team_mileage_dict[user['team_id']].append( { user['name']: user['rewarded_mileage'] } )
-        is_all_achieved_dict[user['team_id']]["number_achieved"] = is_all_achieved_dict[user['team_id']]["number_achieved"] + (1 if user['achievement_count'] > 0 else 0)
-        is_all_achieved_dict[user['team_id']]["team_strength"] = is_all_achieved_dict[user['team_id']]["team_strength"] + 1
+        is_all_achieved_dict[user['team_id']]['number_achieved'] = is_all_achieved_dict[user['team_id']]['number_achieved'] + (1 if user['achievement_count'] > 0 else 0)
+        is_all_achieved_dict[user['team_id']]['team_strength'] = is_all_achieved_dict[user['team_id']]['team_strength'] + 1
 
     all_team_achievement_count = []
     for team in team_dict:
@@ -133,7 +133,7 @@ def list_all_team_achievement_count():
             "team_name": team_name_dict[team],
             "achievement_count_array": team_dict[team],
             "rewarded_mileage_array": team_mileage_dict[team],
-            "is_all_achieved": is_all_achieved_dict[user['team_id']]
+            "is_all_achieved": is_all_achieved_dict[team]
         }
         all_team_achievement_count.append(return_obj)
 
