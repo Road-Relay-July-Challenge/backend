@@ -3,7 +3,7 @@ from time import time
 from flask import Blueprint, request
 from server.routes import ADD_ALL_USER_RANKINGS, GET_USER_RANKINGS, LIST_ALL_INDIVIDUAL, GET_HALL_OF_FAME, OAUTH_URL, UPDATE_ALL_ACHIEVEMENT_COUNT, UPDATE_INDIVIDUAL_TOTAL_MILEAGE,ACTIVITIES_URL, ADD_INDIVIDUAL_WEEKLY_SPECIAL_MILEAGE, UPDATE_USER_RANKINGS
 from server.config import ACHIEVEMENT_EVENT_END_TIME_OBJECT, ACHIEVEMENT_EVENT_START_TIME_OBJECT, CLIENT_ID, CLIENT_SECRET, EAST_WEST_EVENT_END_TIME_OBJECT, EAST_WEST_EVENT_START_TIME_OBJECT, EVENT_END_TIME_OBJECT, EVENT_START_TIME_OBJECT, LIMIT_PER_CATEGORY, MAX_MILEAGE_FOR_TIER_2_RUNS, MAX_MILEAGE_FOR_TIER_3_RUNS, MAX_NUMBER_OF_TIER_2_RUNS, SLOWEST_ALLOWABLE_PACE
-from server.db import add_user_rank, get_all_users, get_data, get_mileage_of_week, get_mileages, get_user_rankings_in_db, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_achievement_data, update_east_west_mileage, update_mileage_data, update_multiple_datas, update_multiple_mileage_datas, update_user_rankings_in_db
+from server.db import add_user_rank, get_all_users, get_data, get_mileage_of_week, get_mileages, get_user_rankings_in_db, get_users_sorted_by_category_and_limit, get_users_sorted_by_mileage, update_east_west_mileage, update_mileage_data, update_multiple_achievement_datas, update_multiple_datas, update_multiple_mileage_datas, update_user_rankings_in_db
 from server.utils import convert_from_greenwich_to_singapore_time, get_week_from_date_object, logger, return_json
 
 individual_api = Blueprint('individual_api', __name__)
@@ -350,8 +350,15 @@ def update_all_achievement_count():
                 continue
 
             achievement_count = achievement_count + activity.get('achievement_count')
-
-        update_achievement_data(person['athlete_id'], 'achievement_count', achievement_count)
+        
+        rewarded_mileage = 0 if achievement_count <= 0 else (achievement_count - 1) * 0.2 + 3.0 
+        update_multiple_achievement_datas(
+            person['athlete_id'], 
+            {
+                "achievement_count": achievement_count,
+                "rewarded_mileage": rewarded_mileage
+            }
+        )
         logger(f"Successfully updated {person['name']}'s achievement count to {achievement_count}.")
 
     logger("Successfully updated all person's achievement count")

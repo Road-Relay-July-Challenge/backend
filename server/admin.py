@@ -16,7 +16,8 @@ def add_all_users_into_achievements_collection():
             "name": user['name'],
             "achievement_count": 0,
             "team_id": user['team_number'],
-            "team_name": team_list[user['team_number'] - 1]["team_name"]
+            "team_name": team_list[user['team_number'] - 1]["team_name"],
+            "rewarded_mileage": 0
         }
 
         add_user_into_achievement(to_set)

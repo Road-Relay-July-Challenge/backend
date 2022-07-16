@@ -216,6 +216,10 @@ def update_achievement_data(athlete_id, field_name, updated_data):
         field_name: updated_data
     })
 
+def update_multiple_achievement_datas(athlete_id, updated_data_obj):
+    doc_ref = db.collection('Achievements').document(str(athlete_id))
+    doc_ref.update(updated_data_obj)
+
 def get_all_achievements():
     doc_stream = db.collection('Achievements').stream()
     users = []
