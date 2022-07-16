@@ -1,7 +1,7 @@
 import sys
 from datetime import datetime, timedelta
 from flask import jsonify
-from server.config import PRINT_TIME_STAMP
+from server.config import BASE_ACHIEVEMENT_MILEAGE, PER_ACHIEVEMENT_MILEAGE, PRINT_TIME_STAMP
 
 def logger(message):
     if PRINT_TIME_STAMP:
@@ -28,3 +28,9 @@ def get_week_from_date_object(date_object):
 
 def convert_seconds_to_hours_minutes_seconds_string(n_seconds):
     return str(timedelta(seconds = n_seconds))
+
+def get_achievement_mileage_from_achievement_count(achievement_count):
+    if achievement_count <= 0:
+        return 0
+    
+    return (achievement_count - 1) * PER_ACHIEVEMENT_MILEAGE + BASE_ACHIEVEMENT_MILEAGE 
