@@ -340,7 +340,7 @@ def update_user_rankings_in_db(user_list):
 def add_team_rank(team_id, ranking=None):
     doc_ref = db.collection('Team_rankings').document(str(team_id))
     new_entry = {
-        "athlete_id": team_id,
+        "team_id": team_id,
         "current_rank": ranking if ranking is not None else 999,
         "last_refresh_rank": 999 
     }
