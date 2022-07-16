@@ -108,20 +108,28 @@ def update_team_rankings():
 def list_all_team_achievement_count():
     user_list = get_all_achievements()
     team_dict = {}
+    team_mileage_dict = {}
     team_name_dict = {}
+    is_all_achieved_dict = {}
     for user in user_list:
         if user['team_id'] not in team_dict:
             team_dict[user['team_id']] = []
             team_name_dict[user['team_id']] = user['team_name']
+            team_mileage_dict[user['team_id']] = []
+            is_all_achieved_dict[user['team_id']] = True
 
-        team_dict[user['team_id']].append( { user['name'] : user['achievement_count'] } )
+        team_dict[user['team_id']].append( { user['name']: user['achievement_count'] } )
+        team_mileage_dict[user['team_id']].append( { user['name']: user['rewarded_mileage'] } )
+        is_all_achieved_dict[user['team_id']] = is_all_achieved_dict[user['team_id']] and (user['achievement_count'] >= 1) 
 
     all_team_achievement_count = []
     for team in team_dict:
         return_obj = {
             "team_number": team,
             "team_name": team_name_dict[team],
-            "achievement_count_array": team_dict[team]
+            "achievement_count_array": team_dict[team],
+            "rewarded_mileage_array": team_mileage_dict[team],
+            "is_all_achieved": is_all_achieved_dict[user['team_id']]
         }
         all_team_achievement_count.append(return_obj)
 
