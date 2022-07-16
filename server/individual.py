@@ -356,7 +356,7 @@ def update_all_achievement_count():
             person['athlete_id'], 
             {
                 "achievement_count": achievement_count,
-                "rewarded_mileage": rewarded_mileage
+                "rewarded_mileage": rewarded_mileage if rewarded_mileage <= 8.0 else 8.0
             }
         )
         logger(f"Successfully updated {person['name']}'s achievement count to {achievement_count}.")
