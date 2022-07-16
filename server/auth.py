@@ -82,7 +82,6 @@ def refresh_all():
         logger(f"Successfully updated {name}'s mileage. {mileage}")
     
     update_all_team_mileage()
-    update_user_rankings()
     return return_json(True, f"Successfully refreshed all teams and individuals.", None)
 
 @auth_api.route(AUTHORIZE_EAST_WEST, methods=['GET'])
