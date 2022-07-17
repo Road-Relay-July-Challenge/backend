@@ -44,7 +44,7 @@ LOSING_MILEAGE = 30 # km
 
 # achievement event
 ACHIEVEMENT_EVENT_START_TIME_OBJECT = datetime.datetime.strptime("2022-07-13 00:00:00", "%Y-%m-%d %H:%M:%S") # 13th July 2022 00:00:00 GMT +8
-ACHIEVEMENT_EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-17 23:59:59", "%Y-%m-%d %H:%M:%S") # 17th July 2022 23:59:59 GMT +8
+ACHIEVEMENT_EVENT_END_TIME_OBJECT = datetime.datetime.strptime("2022-07-20 23:59:59", "%Y-%m-%d %H:%M:%S") # 20th July 2022 23:59:59 GMT +8
 BASE_ACHIEVEMENT_MILEAGE = 3 # km
 PER_ACHIEVEMENT_MILEAGE = 0.2 # km
 REWARDED_ACHIEVEMENT_MILEAGE_CAP = 8.0 # km

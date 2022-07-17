@@ -309,9 +309,8 @@ def update_all_achievement_count():
     all_users = get_all_users()
     for person in all_users:
         access_token_expiry = int(person.get("access_token_expired_at"))
-        name = person.get("athlete_id")
         if access_token_expiry <= time():
-            logger(f"{name}'s token expired at {access_token_expiry}. Refreshing...")
+            logger(f"{person['name']}'s token expired at {access_token_expiry}. Refreshing...")
             obj = get_new_access_token(person.get("refresh_token"), person['athlete_id'])
             if not isinstance(obj, str):
                 return return_json(
