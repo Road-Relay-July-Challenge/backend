@@ -156,6 +156,7 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         greenwich_time_string = activity.get('start_date')
         sg_time_object = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ")
         if sg_time_object < EVENT_START_TIME_OBJECT or sg_time_object > EVENT_END_TIME_OBJECT:
+            logger(f"{name}'s run of {activity.get('distance')} was past the event time. {sg_time_object}")
             continue
 
         if activity.get('type') != 'Run':
