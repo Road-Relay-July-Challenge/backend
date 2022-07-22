@@ -115,7 +115,7 @@ def update_individual_total_mileage():
         "mileage": new_mileage_object
     }
 
-    logger(f"Successfully updated {athlete_id}'s total mileage.", person_mileage_object)
+    logger(f"Successfully updated {athlete_id}'s total mileage. {person_mileage_object}")
     return return_json(True, f"Successfully updated {athlete_id}'s total mileage.", person_mileage_object)
 
 def update_individual_weekly_mileage_from_strava(athlete_id):
@@ -138,25 +138,30 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         access_token = person.get("access_token")
 
     headers = {
-            "Authorization": "Bearer " + access_token
+        "Authorization": "Bearer " + access_token
     }
-    activityRequest = requests.get(ACTIVITIES_URL, headers=headers)
+    params = {
+        "per_page": 50
+    }
+
+    activityRequest = requests.get(ACTIVITIES_URL, params=params, headers=headers)
     if activityRequest.status_code != 200:
         return return_json(
             False, 
             f"Failed to retrieve activities from Strava.\n Error code: {activityRequest.status_code}",
             activityRequest.json()
         )
-    
+
     activityList = activityRequest.json()
     weekly_mileage_dict = {}
     longest_run = 0
     total_time_spent = 0
     for activity in activityList:
+        logger(f"Current activity start date:{activity.get('start_date')}\nCurrent activity distance: {activity.get('distance') / 1000}km\n\n\n")
         greenwich_time_string = activity.get('start_date')
         sg_time_object = convert_from_greenwich_to_singapore_time(greenwich_time_string, "%Y-%m-%dT%H:%M:%SZ")
         if sg_time_object < EVENT_START_TIME_OBJECT or sg_time_object > EVENT_END_TIME_OBJECT:
-            logger(f"{name}'s run of {activity.get('distance')} was past the event time. {sg_time_object}")
+            logger(f"{name}'s run of {activity.get('distance')} was past the event time. {sg_time_object}\n\n\n")
             continue
 
         if activity.get('type') != 'Run':
@@ -176,6 +181,7 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
             weekly_mileage_dict[week] = []
             weekly_mileage_dict[week].append(activity_distance)
 
+
     to_update = {
         "total_time_spent": total_time_spent,
         "longest_run": longest_run
@@ -188,6 +194,9 @@ def update_individual_weekly_mileage_from_strava(athlete_id):
         special_mileage = athlete["special_mileage"]
         true_mileage = sum(weekly_mileage_dict[week])
         contributed_mileage = calculate_weekly_capped_mileage(weekly_mileage_dict[week])
+        logger(f"Week {week} runs: {weekly_mileage_dict[week]}")
+        logger(f"Week {week}'s true mileage: {true_mileage / 1000}")
+        logger(f"Week {week}'s capped mileage: {contributed_mileage / 1000}")
         to_update = {
             "true_mileage": true_mileage,
             "contributed_mileage": contributed_mileage * multiplier + special_mileage
