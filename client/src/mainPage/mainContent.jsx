@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,10 +15,17 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { purple, grey, green, red } from "@mui/material/colors";
 import Slide from "@mui/material/Slide";
-
-function createData(name, total, last, positionChange) {
-  return { name, total, last, positionChange };
-}
+import {
+  getAllDistance,
+  getTeamDistance,
+  getRankings,
+} from "../utils/httpsFunction";
+import Count from "../components/Count";
+import { Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import Announcement from "../components/announcement";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,22 +46,6 @@ function TabPanel(props) {
     </div>
   );
 }
-
-const rows = [
-  createData("1", 159, 6.0, 1),
-  createData("2", 237, 9.0, -1),
-  createData("3", 262, 16.0, 0),
-  createData("4", 305, 3.7, 0),
-  createData("5", 356, 16.0, 1),
-];
-
-const individualRows = [
-  createData("Chua Min", 15, 6.0, 4),
-  createData("Jason", 237, 9.0, -3),
-  createData("Wen Feng", 262, 16.0, 0),
-  createData("Hao Jun", 305, 3.7, 4.3),
-  createData("Lucas", 356, 16.0, 3.9),
-];
 
 const theme = createTheme({
   palette: {
@@ -78,18 +69,88 @@ const theme = createTheme({
   },
 });
 
+const ColorButton = styled(Button)((props) => ({
+  width: "100%",
+  borderRadius: "0px",
+  margin: "0px auto 0px auto",
+  justifySelf: "center",
+  alignSelf: "center",
+  alignItems: "center",
+  color: "#ffffff",
+  backgroundColor: "#000000",
+  "&:focus": {
+    backgroundColor: "#ffffff",
+    color: "#000000",
+  },
+  animationName: "fadeIn" + props.direction,
+  animationDuration: "0.85s",
+  position: "relative",
+}));
+
 export default function MainContent() {
   const [tabValue, setTabValue] = useState(0);
   const [leftTab, setLeftTab] = useState(true);
+  const [individualStats, setIndividualStats] = useState([]);
+  const [teamStats, setTeamStats] = useState([]);
+  const [isloading, setIsLoading] = useState(true);
   const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
     setLeftTab((prev) => !prev);
   };
 
+  useEffect(() => {
+    async function fetchData() {
+      const response = await getAllDistance();
+      const teamResponse = await getTeamDistance();
+      const rankings = await getRankings();
+      console.log(rankings);
+      console.log(response.data.result);
+      // slot ranking data in
+      response.data.result.forEach((atheleteData) => {
+        rankings.data.result.forEach((atheleteRankings) => {
+          if (atheleteData.athlete_id === atheleteRankings.athlete_id) {
+            atheleteData["oldranking"] = atheleteRankings.last_refresh_rank;
+          }
+        });
+      });
+      setIndividualStats(response.data.result);
+      setTeamStats(teamResponse.data.result);
+      setIsLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  const directToEventPage = (link) => {
+    navigate("../" + link, { replace: true });
+  };
+
   return (
     <ThemeProvider theme={theme}>
+      <ColorButton
+        variant="contained"
+        onClick={() => directToEventPage("HallOfFame")}
+        sx={{ backgroundColor: "#45B8AC" }}
+        disableRipple={true}
+        fullWidth={true}
+        direction="Right"
+      >
+        Hall Of Fame
+      </ColorButton>
+      <ColorButton
+        variant="contained"
+        onClick={() => directToEventPage("achievements")}
+        sx={{ backgroundColor: "#e53170" }}
+        style={{ marginBottom: "20px" }}
+        disableRipple={true}
+        fullWidth={true}
+        direction="Left"
+      >
+        Achievements
+      </ColorButton>
+      <Announcement text="RRJC 2022 has concluded. Results will be released on 23rd." />
       <TableContainer
         ref={containerRef}
         component={Paper}
@@ -98,6 +159,13 @@ export default function MainContent() {
           maxWidth: 800,
           margin: "10px auto 10px auto",
           justifySelf: "center",
+          display: "flex",
+          flexDirection: "column",
+        }}
+        style={{
+          animationName: "fadeIn",
+          animationDuration: "0.85s",
+          position: "relative",
         }}
       >
         <Tabs
@@ -112,39 +180,59 @@ export default function MainContent() {
           <Tab label="Team" />
           <Tab label="Individual" />
         </Tabs>
-        <Box style={{ overflow: "scroll" }}>
-          <TabPanel value={tabValue} index={0}>
-            <Slide
-              direction="right"
-              in={leftTab}
-              mountOnEnter
-              unmountOnExit
-              container={containerRef.current}
-            >
-              <Table
-                value="1"
-                sx={{ margin: 0 }}
-                size="small"
-                aria-label="a dense table"
+        {isloading ? (
+          <CircularProgress
+            style={{ alignSelf: "center", margin: "20px", color: "black" }}
+          />
+        ) : (
+          <Box style={{ overflow: "scroll" }}>
+            <TabPanel value={tabValue} index={0}>
+              <Slide
+                direction="right"
+                in={leftTab}
+                mountOnEnter
+                unmountOnExit
+                container={containerRef.current}
               >
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Team Name</TableCell>
-                    <TableCell align="right">{""}</TableCell>
-                    <TableCell align="right">Total Mileage</TableCell>
-                    <TableCell align="right">Last Week</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow
-                      key={row.name}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {row.name}
+                <Table
+                  value="1"
+                  sx={{ margin: 0 }}
+                  size="small"
+                  aria-label="a dense table"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="right" padding="none">
+                        {""}
                       </TableCell>
-                      <TableCell>
+                      <TableCell>Team Name</TableCell>
+                      <TableCell padding="none"> Team No</TableCell>
+                      <TableCell align="right">Total km</TableCell>
+                      <TableCell padding="none" align="right">
+                        True km
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {teamStats.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row" padding="none">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            overflowWrap: "break-word",
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          {row.team_name}
+                        </TableCell>
+                        {/* <TableCell>
                         {row.positionChange > 0 ? (
                           <ArrowDropUpIcon color="up" />
                         ) : row.positionChange < 0 ? (
@@ -152,48 +240,80 @@ export default function MainContent() {
                         ) : (
                           <ArrowDropDownIcon color="nothing" />
                         )}
-                      </TableCell>
-                      <TableCell align="right">{row.total}</TableCell>
-                      <TableCell align="right">{row.last}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Slide>
-          </TabPanel>
+                      </TableCell> */}
+                        <TableCell padding="none" align="center">
+                          {row.team_id}
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.team_contributed_mileage.toFixed(2) || "no run"}
+                        </TableCell>
+                        <TableCell align="right" padding="none">
+                          {row.team_true_mileage.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Slide>
+            </TabPanel>
 
-          <TabPanel value={tabValue} index={1}>
-            <Slide
-              direction="left"
-              in={!leftTab}
-              mountOnEnter
-              unmountOnExit
-              container={containerRef.current}
-            >
-              <Table
-                value="2"
-                sx={{ margin: 0 }}
-                size="small"
-                aria-label="a dense table"
+            <TabPanel value={tabValue} index={1}>
+              <Slide
+                direction="left"
+                in={!leftTab}
+                mountOnEnter
+                unmountOnExit
+                container={containerRef.current}
               >
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>{""}</TableCell>
-                    <TableCell>Total Mileage</TableCell>
-                    <TableCell>Last Week</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {individualRows.map((row) => (
-                    <TableRow
-                      key={row.name}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {row.name}
+                <Table
+                  value="1"
+                  sx={{ margin: 0 }}
+                  size="small"
+                  aria-label="a dense table"
+                  padding="none"
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell padding="default">{""}</TableCell>
+                      <TableCell>Name</TableCell>
+                      {/* <TableCell>{""}</TableCell> */}
+                      <TableCell>Team</TableCell>
+                      <TableCell padding="default" align="right">
+                        Total km
                       </TableCell>
-                      <TableCell>
+                      <TableCell padding="default" align="right">
+                        True km
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {individualStats.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        style={{
+                          background:
+                            row.oldranking < index + 1
+                              ? "#e53170"
+                              : row.oldranking > index + 1
+                              ? "#45B8AC"
+                              : "white",
+                        }}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          // style={{ display: "flex", flexDirection: "column" }}
+                          style={{ paddingLeft: "7px" }}
+                        >
+                          {"    " + (index + 1)}
+                          {/* <ArrowDropUpIcon color="up" /> */}
+                        </TableCell>
+                        <TableCell>{row.name} </TableCell>
+                        <TableCell align="center">{row.team_number}</TableCell>
+                        {/* <TableCell>
                         {row.positionChange > 0 ? (
                           <ArrowDropUpIcon color="up" />
                         ) : row.positionChange < 0 ? (
@@ -201,16 +321,21 @@ export default function MainContent() {
                         ) : (
                           <ArrowDropDownIcon color="nothing" />
                         )}
-                      </TableCell>
-                      <TableCell>{row.total}</TableCell>
-                      <TableCell>{row.last}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Slide>
-          </TabPanel>
-        </Box>
+                      </TableCell> */}
+                        <TableCell padding="default" align="right">
+                          {row.total_contributed_mileage.toFixed(2)}
+                        </TableCell>
+                        <TableCell padding="default" align="right">
+                          {row.total_true_mileage.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Slide>
+            </TabPanel>
+          </Box>
+        )}
       </TableContainer>
     </ThemeProvider>
   );

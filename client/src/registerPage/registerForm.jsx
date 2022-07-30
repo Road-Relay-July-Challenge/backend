@@ -1,54 +1,18 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
-import { createTheme } from "@mui/material/styles";
-import { purple, grey, green, red } from "@mui/material/colors";
+// import { createTheme } from "@mui/material/styles";
+// import { grey, green, red } from "@mui/material/colors";
 import { styled } from "@mui/material/styles";
+import Announcement from "../components/announcement";
 
 export const cleanUpAuthToken = (str) => {
   return str.split("&")[1].slice(5);
 };
 
 export default function registerForm() {
-  // const { REACT_APP_CLIENT_ID } = process.env;
-  const redirectUrl = "https://rrjc-app-herokuapp.com/auth/verify";
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        // Purple and green play nicely together.
-        main: grey[100],
-        contrastText: "#ffffff",
-      },
-      secondary: {
-        // This is green.A700 as hex.
-        main: "#ffffff",
-        contrastText: red[500],
-      },
-      up: {
-        main: green[500],
-      },
-      down: {
-        main: red[500],
-      },
-      nothing: {
-        main: "#ffffff",
-      },
-    },
-    overrides: {
-      MuiButton: {
-        secondary: {
-          main: "#ffffff",
-          contrastText: red[500],
-        },
-      },
-    },
-  });
-
   const ColorButton = styled(Button)(() => ({
     color: "#ffffff",
     backgroundColor: "#000000",
@@ -58,24 +22,16 @@ export default function registerForm() {
     },
   }));
 
-  const handleLogin = async () => {
-    window.location = `http://www.strava.com/oauth/authorize?client_id=88786&response_type=code&redirect_uri=${redirectUrl}&approval_prompt=force&scope=activity:read_all`;
-  };
-
   return (
     <Box
       component="form"
       height="auto"
-      sx={
-        {
-          // backgroundColor: "white",
-        }
-      }
       noValidate
       autoComplete="off"
       width="90%"
       margin="20px auto"
     >
+      <Announcement text="Strava registration and East VS West registration has closed." />
       <Stack spacing={2}>
         <Typography variant="h6" align="center" gutterBottom component="div">
           Strava Registration
@@ -87,13 +43,47 @@ export default function registerForm() {
         </Typography>
 
         <ColorButton
-          href="https://rrjc-app.herokuapp.com/auth/authorize"
           variant="contained"
           // onClick={() => handleLogin()}
           sx={{ backgroundColor: "#000000" }}
           disableRipple={true}
+          href={"https://rrjc-app.herokuapp.com/auth/authorize"}
+          disabled={true}
         >
           Connect to Strava
+        </ColorButton>
+
+        <Typography variant="h6" align="center" gutterBottom component="div">
+          East or West
+        </Typography>
+
+        <Typography variant="body1" gutterBottom component="div">
+          Click on the button belows to choose East or West. You will be
+          prompted to log in to Strava for us to know who you are.
+        </Typography>
+
+        <ColorButton
+          variant="contained"
+          sx={{ backgroundColor: "green" }}
+          disableRipple={true}
+          disabled={true}
+          href={
+            "https://rrjc-app.herokuapp.com/auth/authorize_east_west?chosen_side=east"
+          }
+        >
+          EAST
+        </ColorButton>
+
+        <ColorButton
+          variant="contained"
+          sx={{ backgroundColor: "red" }}
+          disableRipple={true}
+          disabled={true}
+          href={
+            "https://rrjc-app.herokuapp.com/auth/authorize_east_west?chosen_side=west"
+          }
+        >
+          WEST
         </ColorButton>
       </Stack>
     </Box>
