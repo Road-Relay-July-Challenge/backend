@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import TopAppBar from "../components/topAppBar";
-import RedirectContent from "./redirectContent";
+import RedirectContent from "./redirectEastWestContent";
 import { Button, Stack, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-// import _ from "lodash";
-import { testAuthGetter } from "../utils/httpsFunction";
+import { eastWestAuthGetter } from "../utils/httpsFunction";
 import { styled } from "@mui/material/styles";
+import BottomAppBar from "../components/bottomAppBar";
 
 const RedirectPage = (props) => {
   let navigate = useNavigate();
@@ -15,10 +15,25 @@ const RedirectPage = (props) => {
     const cleanUpAuthToken = (str) => {
       return str.split("&")[1].slice(5);
     };
+    const getEastOrWest = (str) => {
+      return str.split("&")[0].slice(7);
+    };
     async function authenticate() {
       try {
+        // If not redirected to Strava, return to home
+        // if (_.isEmpty(location)) {
+        //   console.log("Its here");
+        //   return history.push("/");
+        // }
+
+        // Save the Auth Token to the Store (it's located under 'search' for some reason)
         const stravaAuthToken = cleanUpAuthToken(window.location.search);
-        const response = await testAuthGetter(stravaAuthToken);
+        const chosenSide = getEastOrWest(window.location.search);
+        console.log(stravaAuthToken);
+        console.log(chosenSide);
+        const response = await eastWestAuthGetter(stravaAuthToken, chosenSide);
+        console.log(response);
+        console.log(response.message);
         if (response.success) {
           console.log("You have successfully registered your strava account.");
           setIsSuccess(true);

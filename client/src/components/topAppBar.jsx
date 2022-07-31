@@ -2,31 +2,35 @@ import React from "react";
 import AppBar from "@mui/material/AppBar";
 import { Container } from "@mui/system";
 import Typography from "@mui/material/Typography";
-import {
-  Toolbar,
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  Button,
-} from "@mui/material";
+import { Toolbar, Box, IconButton, Button } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-const pages = ["home", "register", "contact"];
+const pages = [
+  "Home",
+  "Register",
+  "Hall Of Fame",
+  "East Or West",
+  "Achievements",
+];
 
 const TopAppBar = () => {
   let navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
+    setAnchorElNav(!anchorElNav);
   };
 
   const handleCloseNavMenu = (page) => {
+    if (page === "Hall Of Fame") {
+      page = "HallOfFame";
+    } else if (page === "East Or West") {
+      page = "eastOrWest";
+    }
     navigate("../" + page, { replace: true });
     setAnchorElNav(null);
   };
@@ -37,9 +41,52 @@ const TopAppBar = () => {
 
   return (
     <AppBar
-      position="static"
-      sx={{ height: "max-content", background: "black" }}
+      position={anchorElNav ? "sticky" : "static"}
+      sx={{ height: "max-content", background: "black", top: "0" }}
     >
+      {anchorElNav && (
+        <div
+          style={{
+            display: anchorElNav ? "flex" : "none",
+            flexDirection: "column",
+            position: "fixed",
+            top: "50px",
+            zIndex: "2",
+            width: "100vw",
+            backgroundColor: "blacks",
+            animationName: "fadeInMenu",
+            animationDuration: "0.5s",
+          }}
+        >
+          {pages.map((page, index) => (
+            <div
+              key={index}
+              onClick={() => handleCloseNavMenu(page)}
+              style={{
+                padding: "0px 5px 15px 25px",
+                backgroundColor: "black",
+              }}
+            >
+              {page}
+            </div>
+          ))}
+        </div>
+      )}
+      <div
+        onClick={() => handleCloseNavMenuWithoutReplace()}
+        style={{
+          display: anchorElNav ? "block" : "none",
+          position: "fixed",
+          backgroundColor: "white",
+          width: "100vw",
+          height: "80vh",
+          opacity: "0.9",
+          zIndex: "1",
+          bottom: "0px",
+          animationName: "fadeInOpacityOverlay",
+          animationDuration: "1s",
+        }}
+      ></div>
       <Container maxWidth="xl" sx={{}}>
         <Toolbar disableGutters>
           <DirectionsRunIcon
@@ -49,7 +96,7 @@ const TopAppBar = () => {
             variant="h5"
             noWrap
             component="a"
-            href="/"
+            href="/home"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex", textAlign: "center" },
@@ -62,6 +109,7 @@ const TopAppBar = () => {
           >
             RRJC'22
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -73,41 +121,6 @@ const TopAppBar = () => {
             >
               <MenuIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenuWithoutReplace}
-              sx={{
-                display: { xs: "block", md: "none" },
-                transitionDuration: {
-                  appearance: 50,
-                  enter: 50,
-                  exit: 50,
-                },
-              }}
-            >
-              {pages.map((page, index) => (
-                <MenuItem
-                  key={page + "1"}
-                  sx={{ width: "100vw" }}
-                  onClick={() => handleCloseNavMenu(page)}
-                >
-                  <Typography sx={{ width: "100vw" }} textAlign="center">
-                    {page}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
           </Box>
           <DirectionsRunIcon
             sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
@@ -116,7 +129,7 @@ const TopAppBar = () => {
             variant="h5"
             noWrap
             component="a"
-            href=""
+            href="/home"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -134,7 +147,7 @@ const TopAppBar = () => {
             {pages.map((page, index) => (
               <>
                 <Button
-                  key={page}
+                  key={index}
                   onClick={() => handleCloseNavMenu(page)}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >

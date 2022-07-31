@@ -1,9 +1,11 @@
 .App {
-  background-color: rgb(202, 202, 202);
+  background-color: rgb(243, 244, 245);
   height: max-content;
-  min-height: 100vh;
+  min-height: 78vh;
   z-index: -1;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
+  display: flex;
+  flex-direction: column;
 }
 
 .App-logo {
@@ -38,5 +40,109 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.barChart {
+  display: flex;
+  flex-direction: row;
+  margin: 0px auto 0px auto;
+  width: 90%;
+  max-width: 800px;
+}
+
+@keyframes myEffect {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 90%;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    top: 300px;
+    size: 90%;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+    size: 100%;
+  }
+}
+
+@keyframes fadeInMenu {
+  0% {
+    opacity: 0;
+    top: -30px;
+    size: 90%;
+  }
+  100% {
+    opacity: 1;
+    top: 50px;
+    size: 100%;
+  }
+}
+
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    right: 300px;
+  }
+  100% {
+    opacity: 1;
+    right: 0px;
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    left: 300px;
+  }
+  100% {
+    opacity: 1;
+    left: 0px;
+  }
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOpacityBottomNavBar {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOpacityOverlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes fadeInTimer {
+  0% {
+    top: 10px;
+  }
+  100% {
+    top: -10px;
   }
 }
