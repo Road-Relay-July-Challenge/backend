@@ -377,7 +377,7 @@
 
     * **Code:** 200 <br />
     **Content:** `{
-        "message": "Successfully updated 68227634's total mileage.",
+        "message": "Successfully updated <DUMMY_ID>'s total mileage.",
         "result": {
             "athlete_id": "<DUMMY_ID>",
             "mileage": {
@@ -496,3 +496,5 @@
         ],
         "success": true
     }`
+
+
