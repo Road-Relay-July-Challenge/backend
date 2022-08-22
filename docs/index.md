@@ -497,4 +497,309 @@
         "success": true
     }`
 
+# Team APIs
 
+**List all team**
+----
+  Lists all teams and their details, sorted in mileage order.
+
+* **URL**
+
+  /team/list_all_team
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully retrieved all teams.",
+        "result": [
+            {
+                "team_id": "1",
+                "team_mileage": 5000
+            },
+            {
+                "team_id": "2",
+                "team_mileage": 50
+            },
+            {
+                "team_id": "3",
+                "team_mileage": 3
+            }
+        ],
+        "success": true
+    }`
+
+**Update all team mileage**
+----
+  Update all team’s total true and contributed mileage, as retrieved from database.
+
+* **URL**
+
+  /team/update_all_team_mileage
+
+* **Method:**
+
+  `POST`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully updated all teams' mileage.",
+        "result": {
+            "1": {
+                "team_contributed_mileage": 45.42,
+                "team_true_mileage": 45.42
+            }
+        },
+        "success": true
+    }`
+
+* **Notes:**
+
+  You should call the update_individual_total_mileage first to update the DB if you have not done so.
+
+**Get all east west mileage**
+----
+  Lists the east side list, west side list, and each side’s pax and mileage, sorted in mileage order.
+
+* **URL**
+
+  /team/get_all_east_west_mileage
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully retrieved all east west mileages.",
+        "result": {
+            "east_side_list": [
+                {
+                    "athlete_id": <DUMMY_ID>,
+                    "chosen_side": "east",
+                    "mileage": 3.2,
+                    "name": "Claire Chan"
+                },
+            ],
+            "east_side_mileage": 3.2,
+            "east_side_pax": 8,
+            "west_side_list": [
+                {
+                    "athlete_id": <DUMMY_ID>,
+                    "chosen_side": "west",
+                    "mileage": 8.440000000000001,
+                    "name": "yu ching ng"
+                },
+            ],
+            "west_side_mileage": 8.440000000000001,
+            "west_side_pax": 2
+        },
+        "success": true
+    }`
+
+**Add all team rankings**
+----
+  Adds rankings for all teams.
+
+* **URL**
+
+  /team/add_all_team_rankings
+
+* **Method:**
+
+  `POST`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully added all rankings.",
+        "result": null,
+        "success": true
+    }`
+
+**Update team rankings**
+----
+  Updates rankings for all teams.
+
+* **URL**
+
+  /team/update_team_rankings
+
+* **Method:**
+
+  `POST`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully updated team rankings.",
+        "result": [
+            {
+                "current_rank": 2,
+                "last_refresh_rank": 1,
+                "name": 7
+            },
+            {
+                "current_rank": 3,
+                "last_refresh_rank": 2,
+                "name": 5
+            },
+        ],
+        "success": true
+    }`
+
+**Get team rankings**
+----
+  Get rankings for all teams.
+
+* **URL**
+
+  /team/get_team_rankings
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully retrieved all team rankings.",
+        "result": [
+            {
+                "athlete_id": 1,
+                "current_rank": 4,
+                "last_refresh_rank": 4
+            },
+            {
+                "athlete_id": 2,
+                "current_rank": 7,
+                "last_refresh_rank": 7
+            }
+        ],
+        "success": true
+    }`
+
+**List all team achievement count**
+----
+  Lists all teams’ and their team members’ achievement count.
+
+* **URL**
+
+  /team/list_all_team_achievement_count
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully retrieved all teams' achievement count.",
+        "result": [
+                        {
+                "achievement_count_array": [
+                    {
+                        "Cynthia  Lau": 0
+                    },
+                    {
+                        "Luah Jun Yang": 0
+                    },
+                    {
+                        "Wilfred Lim": 0
+                    },
+                    {
+                        "Hoo Fang Yu": 0
+                    }
+                ],
+                "is_all_achieved": {
+                    "number_achieved": 2,
+                    "team_strength": 4
+                },
+                "rewarded_mileage_array": [
+                    {
+                        "Cynthia  Lau": 0
+                    },
+                    {
+                        "Luah Jun Yang": 0
+                    },
+                    {
+                        "Wilfred Lim": 0
+                    },
+                    {
+                        "Hoo Fang Yu": 0
+                    }
+                ],
+                "team_name": "EZ$60",
+                "team_number": 3
+            }
+        ],
+        "success": true
+    }`
