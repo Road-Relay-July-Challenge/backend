@@ -359,7 +359,7 @@
 
 * **URL**
 
-  /individual/get_hall_of_fame
+  /individual/update_individual_total_mileage
 
 * **Method:**
 
