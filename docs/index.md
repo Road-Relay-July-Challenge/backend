@@ -260,3 +260,239 @@
 * **Notes:**
 
   This is a GET request and not POST since Strava API passes the parameter code in the URL.
+
+# Individual APIs
+
+**List all individual**
+----
+  List all individuals and their data.
+
+* **URL**
+
+  /individual/list_all_individual
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully retrieved all individuals.",
+        "result": [
+            {
+                "athlete_id": 123,
+                "multiplier": 1,
+                "name": "test",
+                "team_number": 0,
+                "total_contributed_mileage": 0,
+                "total_true_mileage": 0
+            },
+            {
+                "athlete_id": <DUMMY_ID>,
+                "multiplier": 1,
+                "name": "Jason Ng",
+                "team_number": 0,
+                "total_contributed_mileage": 0,
+                "total_true_mileage": 0
+            }
+        ],
+        "success": true
+    }`
+
+**Get hall of fame**
+----
+  Lists top 5 individuals for the following categories: Longest run, Furthest run, Highest contributed mileage, Highest true mileage
+
+* **URL**
+
+  /individual/get_hall_of_fame
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{        
+        "message": "Successfully retrieved hall of fame.",
+        "result": {
+            "Highest Contributed Mileage": [
+                {
+                    "athlete_id": <DUMMY_ID>,
+                    "data": 36.03,
+                    "name": "Hao Jun Sng",
+                    "team_number": 7
+                },
+                {
+                    "athlete_id": <DUMMY_ID>,
+                    "data": 35.0,
+                    "name": "Nico Sim",
+                    "team_number": 7
+                },
+            ]
+        },
+        "success": true
+    }`
+
+**Update individual total mileage**
+----
+  Updates specific athlete’s total mileage, as retrieved from Strava
+
+* **URL**
+
+  /individual/get_hall_of_fame
+
+* **Method:**
+
+  `POST`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  `athlete_id=[integer]`
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully updated 68227634's total mileage.",
+        "result": {
+            "athlete_id": "<DUMMY_ID>",
+            "mileage": {
+                "total_contributed_mileage": 45.42,
+                "total_true_mileage": 45.42
+            }
+        },
+        "success": true
+    }`
+
+**Add all user rankings**
+----
+  Adds rankings for all participants
+
+* **URL**
+
+  /individual/add_all_user_rankings
+
+* **Method:**
+
+  `POST`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully added all rankings.",
+        "result": null,
+        "success": true
+    }`
+
+**Update all user rankings**
+----
+  Update rankings for all participants
+
+* **URL**
+
+  /individual/update_user_rankings
+
+* **Method:**
+
+  `POST`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully updated user rankings.",
+        "result": [
+            {
+                "current_rank": 2,
+                "last_refresh_rank": 1,
+                "name": "Hao Jun Sng"
+            },
+            {
+                "current_rank": 3,
+                "last_refresh_rank": 2,
+                "name": "Nico Sim"
+            },
+        ],
+        "success": true
+    }`
+
+**Get user rankings**
+----
+  Get all user rankings
+
+* **URL**
+
+  /individual/get_user_rankings
+
+* **Method:**
+
+  `GET`
+  
+* **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully retrieved all user rankings.",
+        "result": [
+            {
+                "athlete_id": <DUMMY_ID>,
+                "current_rank": 25,
+                "last_refresh_rank": 25
+            },
+            {
+                "athlete_id": <DUMMY_ID>,
+                "current_rank": 26,
+                "last_refresh_rank": 26
+            }
+        ],
+        "success": true
+    }`
