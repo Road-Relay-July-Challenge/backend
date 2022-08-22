@@ -157,7 +157,7 @@
 
 * **URL**
 
-  /auth/authorize
+  /auth/verify
 
 * **Method:**
 
