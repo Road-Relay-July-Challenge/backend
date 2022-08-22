@@ -114,30 +114,4 @@ def choose_east_or_west():
 
     logger(f"Successfully added {name[0]}'s side, {chosen_side}.")
     return return_json(True, f"Successfully added your chosen side, the great {chosen_side.upper()}", None)
-
-@auth_api.route(REFRESH_ALL_EAST_WEST, methods=['POST'])
-def refresh_all_east_west():
-    athletes_and_side = get_all_east_west_users()
-    east_side_mileage = 0
-    east_side_pax = 0
-    west_side_mileage = 0
-    west_side_pax = 0
-
-    for athlete in athletes_and_side:
-        mileage = update_individual_east_west_mileage_from_strava(athlete["athlete_id"])
-        if not isinstance(mileage, int) and not isinstance(mileage, float):
-            return return_json(False, f"Unable to get mileage of {athlete['name']}", mileage)
-
-        chosen_side = athlete.get("chosen_side")
-        if chosen_side == "east":
-            east_side_mileage = east_side_mileage + mileage
-            east_side_pax = east_side_pax + 1
-        elif chosen_side == "west":
-            west_side_mileage = west_side_mileage + mileage
-            west_side_pax = west_side_pax + 1
-
-        logger(f"Successfully updated {athlete['name']}'s mileage to {mileage} km.")
-
-    logger("Successfully refreshed all for east and west.")
-    return return_json(True, "Successfully refreshed all for east and west.", None)
     
