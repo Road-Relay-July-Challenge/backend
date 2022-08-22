@@ -1,64 +1,124 @@
----
-layout: page
-title: RRJC X Strava Web App
----
-
-# RRJC X Strava Web App
+# RRJC X Strava Web App API documentation
 
 <img width="100%" alt="image" src="https://user-images.githubusercontent.com/60415251/181936592-b9c338b7-75c5-4479-a781-bcb75dc21f1c.png">
 
 
-## ⭐  About
+# Admin APIs
 
-Road Relay July Challenge (RRJC) is a yearly virtual running event organized by Raffles Hall Road Relay https://www.instagram.com/road.relay/. It was started in 2020 during the Covid times. RRJC X Strava Webapp was built to provide a leaderboard and fulfil adminstrative purpose such as carrying out event challenges and collating distances through strava API. The participants use Strava https://www.strava.com to record running distances during the event period. 
+**Refresh All**
+----
+  Refreshes all details for all individuals and teams.
 
-<table>
-  <tr>
-    <td>Home Page</td>
-     <td>Hall Of Fame</td>
-     <td>Strava Registration</td>
-  </tr>
-  <tr>
-    <td><img width="100%" alt="image" src="https://user-images.githubusercontent.com/60415251/181937677-27525df8-5c1e-4cea-bf8a-c12c309f3224.png">
-</td>
-    <td><img width="100%" alt="image" src="https://user-images.githubusercontent.com/60415251/181937755-679be87a-0fb4-4a87-a6cb-ac4affa0877c.png">
-</td>
-    <td><img width="100%" alt="image" src="https://user-images.githubusercontent.com/60415251/181937779-93409702-9e38-41ab-ae77-f712e8382734.png">
-</td>
-  </tr>
- </table>
+* **URL**
 
+  /admin/refresh_all
 
+* **Method:**
 
-## 🛠️  Key Technologies
-#### Frontend
-- React
-- JavaScript
-- Material-UI
+  `GET`
+  
+*  **URL Params**
 
-#### Backend
-- Python
-- Flask App
+  NIL
 
-#### Deployment
-- Heroku (Backend Services)
-- Vercel (Frontend PWA)
+* **Data Params**
 
-#### Database
-- Firebase Firestore
+  NIL
 
-#### Scheduler
-- Heroku 
+* **Success Response:**
 
-## 📝  Data Sources
-The information and data used in RRJC WebApp is fetched from Strava via:
-- https://developers.strava.com/
+  * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully refreshed all teams' mileage",
+        "result": {
+            "1": 7
+        },
+        "success": true
+    }`
 
-## 🚧 Contributor
-- <a href="https://www.linkedin.com/in/lim-wen-feng/">Lim Wen Feng</a>
-- <a href="https://www.linkedin.com/in/jasonngzhenqi/">Jason Ng</a>
-- <a href="https://www.linkedin.com/in/zhen-hong-ho-42b0b4151/">Ho Zhen Hong</a>
+**Add all users into achievements collection**
+----
+  Adds all current users into Achievements collection.
 
+* **URL**
 
-## 😊  Contact Me
-If you liked the website or just want to get in touch, reach out to us at our linkedIn <a href="https://www.linkedin.com/in/lim-wen-feng/">Lim Wen Feng</a>, <a href="https://www.linkedin.com/in/jasonngzhenqi/">Jason Ng</a> ,  <a href="https://www.linkedin.com/in/zhen-hong-ho-42b0b4151/">Ho Zhen Hong</a>. Cheers.
+  /admin/add_all_users_into_achievements_collection
+
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully added all users into achievements collection.",
+        "result": null,
+        "success": true
+    }`
+
+**Refresh all east west**
+----
+  Refreshes all details for all individuals and for east west
+
+* **URL**
+
+  /admin/refresh_all_east_west
+
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  NIL
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully refreshed all for east and west.",
+        "result": null,
+        "success": true
+    }`
+
+**Add individual weekly special mileage**
+----
+  Adds special mileage of athlete of that week, in km.
+
+* **URL**
+
+  /admin/add_individual_weekly_special_mileage
+
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+
+  NIL
+
+* **Data Params**
+
+  `athlete_id=[integer]` `week=[integer]` `mileage=[integer]`
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+        "message": "Successfully updated special mileage for 73815270 to 14000 cm.",
+        "result": null,
+        "success": true
+    }`
