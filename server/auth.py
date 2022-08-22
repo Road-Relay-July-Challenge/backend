@@ -4,8 +4,7 @@ import requests
 import urllib3
 from server.config import AUTH_URL, CLIENT_ID, CLIENT_SECRET, EAST_WEST_REDIRECT_URL, EAST_WEST_SIGN_UP_END_TIME_OBJECT, EVENT_WEEKS
 from server.routes import AUTHORIZE_EAST_WEST, CHOOSE_EAST_OR_WEST, REFRESH_ALL_EAST_WEST, VERIFY, OAUTH_URL, REFRESH_ALL, AUTHORIZE
-from server.individual import update_individual_east_west_mileage_from_strava, update_individual_total_mileage_from_db, update_individual_weekly_mileage_from_strava, update_user_rankings
-from server.team import update_all_team_mileage
+from server.individual import update_individual_east_west_mileage_from_strava
 from server.utils import return_json, logger
 from server.db import add_mileages, add_person, add_user_rank, get_all_east_west_users, get_users_sorted_by_mileage, is_person_added, is_side_added, update_multiple_datas, add_side
 
@@ -66,23 +65,6 @@ def verify():
 
     logger(f"Successfully initialized {person['name']}'s mileages.")
     return return_json(True, f"Welcome to RRJC 2022, {person['name']}.", [person, mileages])
-
-@auth_api.route(REFRESH_ALL, methods=['POST'])
-def refresh_all():
-    athletes_and_team_number = get_users_sorted_by_mileage()
-
-    for athlete in athletes_and_team_number:
-        obj = update_individual_weekly_mileage_from_strava(athlete.get("athlete_id"))
-        if not isinstance(obj, dict):
-            return obj
-
-        obj = update_individual_total_mileage_from_db(athlete.get("athlete_id"))
-        mileage = obj
-        name = athlete.get("name")
-        logger(f"Successfully updated {name}'s mileage. {mileage}")
-    
-    update_all_team_mileage()
-    return return_json(True, f"Successfully refreshed all teams and individuals.", None)
 
 @auth_api.route(AUTHORIZE_EAST_WEST, methods=['GET'])
 def authorize_east_west():
