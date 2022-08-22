@@ -294,22 +294,6 @@ def update_individual_east_west_mileage_from_strava(athlete_id):
 
     return total_mileage
 
-@individual_api.route(ADD_INDIVIDUAL_WEEKLY_SPECIAL_MILEAGE, methods=['POST'])
-def add_individual_weekly_special_mileage():
-    athlete_id = request.form.get('athlete_id')
-    week = request.form.get('week')
-    mileage_in_km = request.form.get('mileage')
-
-    if None in [athlete_id, week, mileage_in_km]:
-        return return_json(False, "Missing parameters. Requires athlete_id, week, mileage.", None)
-
-    current_mileage_of_week = get_mileage_of_week(athlete_id, week)
-    new_special_mileage = float(mileage_in_km) * 1000 + current_mileage_of_week['special_mileage']
-
-    update_mileage_data(athlete_id, week, "special_mileage", new_special_mileage)
-
-    return return_json(True, f"Successfully updated special mileage for {athlete_id} to {new_special_mileage / 1000} km.", None)
-
 @individual_api.route(UPDATE_ALL_ACHIEVEMENT_COUNT, methods=['POST'])
 def update_all_achievement_count():
     all_users = get_all_users()
