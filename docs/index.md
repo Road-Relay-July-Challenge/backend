@@ -118,7 +118,7 @@
 
   * **Code:** 200 <br />
     **Content:** `{
-        "message": "Successfully updated special mileage for 73815270 to 14000 cm.",
+        "message": "Successfully updated special mileage for <DUMMY_ID> to 14000 cm.",
         "result": null,
         "success": true
     }`
