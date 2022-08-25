@@ -5,7 +5,7 @@
 
 ## ⭐  About
 
-Road Relay July Challenge (RRJC) is a yearly virtual running event organized by Raffles Hall Road Relay https://www.instagram.com/road.relay/. It was started in 2020 during the Covid times. RRJC X Strava Webapp was built to provide a leaderboard and fulfil adminstrative purpose such as carrying out event challenges and collating distances through strava API. The participants use Strava https://www.strava.com to record running distances during the event period. 
+Road Relay July Challenge (RRJC) is a yearly virtual running event organized by Raffles Hall Road Relay https://www.instagram.com/road.relay/. It was started in 2020 during the Covid times. RRJC X Strava Webapp was built to provide a leaderboard and fulfill adminstrative purpose such as carrying out event challenges and collating distances through Strava's API. After going through a one-time authentication, participants are able to see their running distances on the app's leaderboard automatically synced with their recorded runs on Strava[https://www.strava.com].
 
 <table>
   <tr>
@@ -33,7 +33,7 @@ Road Relay July Challenge (RRJC) is a yearly virtual running event organized by 
 
 #### Backend
 - Python
-- Flask App
+- Flask
 
 #### Deployment
 - Heroku (Backend Services)
