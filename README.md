@@ -56,4 +56,4 @@ The information and data used in RRJC WebApp is fetched from Strava via:
 
 
 ## 😊  Contact Me
-If you liked the website or just want to get in touch, reach out to us at our linkedIn <a href="https://www.linkedin.com/in/lim-wen-feng/">Lim Wen Feng</a>, <a href="https://www.linkedin.com/in/jasonngzhenqi/">Jason Ng</a> ,  <a href="https://www.linkedin.com/in/zhen-hong-ho-42b0b4151/">Ho Zhen Hong</a>. Cheers.
+If you liked the website or just want to get in touch, reach out to us at our linkedIn <a href="https://www.linkedin.com/in/lim-wen-feng/">Lim Wen Feng</a>, <a href="https://www.linkedin.com/in/jasonngzhenqi/">Jason Ng</a>,  <a href="https://www.linkedin.com/in/zhen-hong-ho-42b0b4151/">Ho Zhen Hong</a>. Cheers.
